@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KML / KMZ / GeoJSON Viewer — Batwing Parks & Airspace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://unpkg.com/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js"></script>
+  <style>
+    :root {
+      --bg:#f4f3ef;--surface:#fafaf8;--surface-2:#eeecea;
+      --text:#1e1d18;--text-2:#3a3830;--muted:#72706a;
+      --border:rgba(30,29,24,0.11);--accent:#01696f;
+      --accent-light:rgba(1,105,111,0.09);
+      --danger:#9a2545;--success:#1a7a4a;
+      --success-light:rgba(26,122,74,0.09);
+      --export:#5a3a9a;--export-light:rgba(90,58,154,0.09);
+      --radius:14px;--radius-sm:9px;
+      --shadow:0 8px 32px rgba(20,20,16,.10),0 2px 6px rgba(20,20,16,.06);
+      --shadow-sm:0 2px 8px rgba(20,20,16,.08);
+      --font:'General Sans',system-ui,-apple-system,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);}
+    .app{display:grid;grid-template-columns:360px 1fr;height:100dvh;}
+    .panel{background:linear-gradient(160deg,var(--surface),var(--surface-2));border-right:1px solid var(--border);overflow-y:auto;}
+    .panel-inner{padding:20px 18px 32px;display:flex;flex-direction:column;gap:14px;}
+    /* brand */
+    .brand{display:flex;align-items:center;gap:12px;}
+    .bat-logo{width:38px;height:38px;flex-shrink:0;}
+    .brand-text h1{font-size:1.05rem;font-weight:700;line-height:1.1;}
+    .brand-text .tagline{font-size:.78rem;color:var(--muted);margin-top:2px;}
+    /* cards */
+    .card{background:rgba(255,255,255,.65);border:1px solid var(--border);border-radius:var(--radius);padding:14px 14px 16px;box-shadow:var(--shadow-sm);}
+    .card-label{font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+    .clb{font-size:.65rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:999px;}
+    .clb-green{background:var(--success-light);color:var(--success);border:1px solid rgba(26,122,74,.2);}
+    .clb-purple{background:var(--export-light);color:var(--export);border:1px solid rgba(90,58,154,.2);}
+    /* file drop */
+    .file-drop{border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:16px 12px;text-align:center;cursor:pointer;transition:border-color .18s,background .18s;position:relative;}
+    .file-drop:hover,.file-drop.dragover{border-color:var(--accent);background:var(--accent-light);}
+    .file-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .file-drop-icon{font-size:1.5rem;margin-bottom:6px;}
+    .fdi-label{font-size:.88rem;color:var(--muted);}
+    .fdi-label strong{color:var(--accent);}
+    /* inputs */
+    textarea,input[type=text]{width:100%;font:inherit;font-size:.88rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;background:rgba(255,255,255,.8);color:var(--text);outline:none;resize:vertical;}
+    textarea{min-height:80px;}
+    textarea:focus,input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(1,105,111,.12);}
+    /* buttons */
+    .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    button{font:inherit;font-size:.85rem;font-weight:600;border:none;border-radius:999px;padding:8px 14px;cursor:pointer;transition:opacity .15s,transform .1s;}
+    button:active{transform:scale(.97);}
+    .btn-p{background:var(--accent);color:#fff;}
+    .btn-p:hover{opacity:.88;}
+    .btn-g{background:rgba(255,255,255,.7);color:var(--text-2);border:1px solid var(--border);}
+    .btn-g:hover{background:#fff;}
+    .btn-d{background:var(--danger);color:#fff;}
+    .btn-d:hover{opacity:.88;}
+    .btn-i{background:transparent;color:var(--muted);border:1px solid var(--border);padding:5px 9px;font-size:.78rem;}
+    .btn-save{background:var(--success-light);color:var(--success);border:1px solid rgba(26,122,74,.25);}
+    .btn-save:hover{background:rgba(26,122,74,.16);}
+    .btn-export{background:var(--export-light);color:var(--export);border:1px solid rgba(90,58,154,.25);font-weight:700;}
+    .btn-export:hover{background:rgba(90,58,154,.16);}
+    /* layers */
+    .layer-list{display:flex;flex-direction:column;gap:8px;}
+    .layer-empty{font-size:.88rem;color:var(--muted);text-align:center;padding:12px 0 4px;}
+    .layer-item{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;background:rgba(255,255,255,.75);cursor:pointer;transition:background .15s,border-color .15s;}
+    .layer-item:hover{background:#fff;}
+    .layer-item.active{border-color:var(--accent);background:#fff;}
+    .layer-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+    .layer-name{font-size:.9rem;font-weight:600;word-break:break-all;}
+    .badge{font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--border);color:var(--muted);white-space:nowrap;flex-shrink:0;}
+    .badge.parks{border-color:#7a4f1c;color:#7a4f1c;}
+    .badge.airspace{border-color:#0050d0;color:#0050d0;}
+    .badge.saved{border-color:rgba(26,122,74,.3);color:var(--success);background:var(--success-light);}
+    .layer-meta{font-size:.78rem;color:var(--muted);margin-top:4px;}
+    .layer-controls{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+    /* style panel */
+    .style-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .style-field label{display:block;font-size:.75rem;color:var(--muted);font-weight:600;margin-bottom:4px;}
+    .color-row{display:flex;align-items:center;gap:8px;}
+    input[type=color]{width:34px;height:28px;border:1px solid var(--border);border-radius:7px;padding:2px;background:#fff;cursor:pointer;}
+    .slider-field{grid-column:1/-1;}
+    .slider-field label{font-size:.75rem;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;margin-bottom:5px;}
+    input[type=range]{width:100%;accent-color:var(--accent);}
+    /* metadata editor */
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .meta-field label{display:block;font-size:.72rem;color:var(--muted);font-weight:600;margin-bottom:3px;}
+    .meta-field input{font-size:.82rem;padding:7px 10px;}
+    /* preset list */
+    .preset-list{display:flex;flex-direction:column;gap:6px;}
+    .preset-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:rgba(255,255,255,.7);font-size:.84rem;}
+    .preset-swatch{width:14px;height:14px;border-radius:3px;border:1.5px solid;flex-shrink:0;}
+    .preset-name{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .preset-theme{font-size:.7rem;color:var(--muted);}
+    .preset-empty{font-size:.86rem;color:var(--muted);text-align:center;padding:10px 0;}
+    /* legend */
+    .legend{display:grid;grid-template-columns:1fr 1fr;gap:5px 8px;}
+    .legend-item{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--muted);}
+    .legend-swatch{width:22px;height:10px;border-radius:3px;flex-shrink:0;border:1.5px solid;}
+    /* token */
+    .token-row{display:flex;gap:8px;}
+    .token-row input{flex:1;font-size:.82rem;}
+    .basemap-hint{font-size:.78rem;color:var(--muted);margin-top:6px;}
+    .basemap-hint a{color:var(--accent);}
+    /* map */
+    .map-wrap{position:relative;min-width:0;}
+    #map{height:100dvh;width:100%;background:#d5e0e8;}
+    /* hud */
+    .hud{position:absolute;top:16px;right:16px;z-index:900;background:rgba(250,250,248,.92);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);min-width:210px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+    .hud-title{font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+    #hud-status{font-size:.9rem;font-weight:600;min-height:1.2em;}
+    .hud-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+    .hud-chip{padding:4px 9px;border-radius:999px;background:var(--accent-light);color:#0d5f63;font-size:.74rem;font-weight:600;}
+    /* toast */
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);z-index:9999;padding:11px 20px;border-radius:999px;font-size:.88rem;font-weight:600;white-space:nowrap;box-shadow:var(--shadow);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .2s;opacity:0;pointer-events:none;}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #toast.success{background:#1a7a4a;color:#fff;}
+    #toast.info{background:#01696f;color:#fff;}
+    #toast.warn{background:#b06010;color:#fff;}
+    #toast.export{background:var(--export);color:#fff;}
+    .hint{font-size:.82rem;color:var(--muted);line-height:1.5;margin-top:6px;}
+    /* ── EXPORT MODAL ─────────────────────────────────────────────── */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(20,20,16,.45);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+    .modal-backdrop.hidden{display:none;}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;width:100%;max-width:440px;max-height:90dvh;overflow-y:auto;}
+    .modal h2{font-size:1.1rem;font-weight:700;margin-bottom:4px;}
+    .modal .modal-sub{font-size:.86rem;color:var(--muted);margin-bottom:20px;}
+    .modal-section{margin-bottom:18px;}
+    .modal-section label.section-label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+    .format-row{display:flex;gap:10px;}
+    .format-btn{flex:1;padding:12px 10px;border-radius:var(--radius-sm);border:2px solid var(--border);background:#fff;cursor:pointer;font-size:.88rem;font-weight:600;text-align:center;transition:border-color .15s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+    .format-btn .fmt-icon{font-size:1.4rem;}
+    .format-btn .fmt-ext{font-size:.72rem;color:var(--muted);}
+    .format-btn.selected{border-color:var(--export);background:var(--export-light);}
+    .layer-check-list{display:flex;flex-direction:column;gap:6px;}
+    .layer-check-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:rgba(255,255,255,.7);cursor:pointer;}
+    .layer-check-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--export);cursor:pointer;flex-shrink:0;}
+    .layer-check-label{font-size:.88rem;font-weight:600;flex:1;}
+    .layer-check-meta{font-size:.75rem;color:var(--muted);}
+    .filename-row{display:flex;gap:8px;align-items:center;}
+    .filename-row input{flex:1;font-size:.88rem;}
+    .filename-row .ext-badge{font-size:.82rem;color:var(--muted);font-weight:600;white-space:nowrap;}
+    .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
+    .btn-export-go{background:var(--export);color:#fff;padding:10px 22px;font-size:.9rem;}
+    .btn-export-go:hover{opacity:.88;}
+    .btn-export-go:disabled{opacity:.4;cursor:not-allowed;}
+    /* ── DRAW TOOL ────────────────────────────────────────────── */
+    :root{--draw:#c05000;--draw-light:rgba(192,80,0,0.10);}
+    .btn-draw{background:var(--draw-light);color:var(--draw);border:1px solid rgba(192,80,0,.25);font-weight:700;}
+    .btn-draw:hover{background:rgba(192,80,0,.18);}
+    .btn-draw.active{background:var(--draw);color:#fff;}
+    /* draw modal */
+    #drawModal .modal{max-width:480px;}
+    .draw-type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px;}
+    .draw-type-btn{padding:10px 8px;border-radius:var(--radius-sm);border:2px solid var(--border);background:#fff;cursor:pointer;font-size:.82rem;font-weight:700;text-align:center;transition:border-color .15s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+    .draw-type-btn .dt-icon{font-size:1.3rem;}
+    .draw-type-btn.selected{border-color:var(--draw);background:var(--draw-light);color:var(--draw);}
+    /* draw hud overlay */
+    #drawHud{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:1500;background:rgba(20,20,16,.88);color:#fff;border-radius:999px;padding:10px 20px;font-size:.88rem;font-weight:600;white-space:nowrap;display:none;gap:12px;align-items:center;backdrop-filter:blur(8px);box-shadow:var(--shadow);}
+    #drawHud.visible{display:flex;}
+    #drawHud .draw-hud-key{background:rgba(255,255,255,.18);border-radius:6px;padding:2px 8px;font-size:.78rem;font-family:monospace;}
+    /* vertex list */
+    #vertexCount{font-size:.78rem;color:var(--muted);margin-top:4px;min-height:1em;}
+    /* shape list in draw panel */
+    .shape-list{display:flex;flex-direction:column;gap:6px;}
+    .shape-item{border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;background:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px;}
+    .shape-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+    .shape-name{flex:1;font-size:.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .shape-controls{display:flex;gap:4px;flex-shrink:0;}
+    .shape-empty{font-size:.86rem;color:var(--muted);text-align:center;padding:8px 0;}
+    /* draw cursor on map */
+    .leaflet-draw-cursor{cursor:crosshair!important;}
+    .draw-vertex-marker{background:#c05000;border:2px solid #fff;width:10px;height:10px;border-radius:50%;margin-top:-5px;margin-left:-5px;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+    .draw-vertex-marker.first{background:#1a7a4a;border-color:#fff;cursor:pointer!important;width:14px;height:14px;margin-top:-7px;margin-left:-7px;}
+    .draw-preview-line{stroke:#c05000;stroke-width:2;stroke-dasharray:6 4;}
+    /* ── VALIDATION ────────────────────────────────────────── */
+    :root{--warn:#a05000;--warn-light:rgba(160,80,0,0.10);--ok:#1a7a4a;--ok-light:rgba(26,122,74,0.09);}
+    /* Shape-item validation states */
+    .shape-item.valid   {border-color:rgba(26,122,74,.35);}
+    .shape-item.invalid {border-color:rgba(160,80,0,.45);background:rgba(160,80,0,.05);}
+    .shape-item.fixed   {border-color:rgba(26,74,138,.35);background:rgba(26,74,138,.04);}
+    /* Validation badge pill */
+    .vbadge{font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+      padding:2px 7px;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-left:2px;}
+    .vbadge.ok  {background:var(--ok-light);color:var(--ok);border:1px solid rgba(26,122,74,.25);}
+    .vbadge.warn{background:var(--warn-light);color:var(--warn);border:1px solid rgba(160,80,0,.3);}
+    .vbadge.fixed{background:var(--edit-light);color:var(--edit);border:1px solid rgba(26,74,138,.25);}
+    /* Validate button */
+    .btn-validate{background:rgba(160,80,0,.1);color:var(--warn);border:1px solid rgba(160,80,0,.25);font-weight:700;}
+    .btn-validate:hover{background:rgba(160,80,0,.18);}
+    /* Issue list inside shape-item */
+    .issue-list{margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+    .issue-row{display:flex;align-items:flex-start;gap:6px;font-size:.74rem;color:var(--warn);line-height:1.35;}
+    .issue-icon{flex-shrink:0;font-size:.8rem;}
+    .issue-row.fixed-row{color:var(--edit);}
+    /* Validation summary banner */
+    #valSummary{border-radius:var(--radius-sm);padding:8px 12px;font-size:.8rem;font-weight:600;
+      display:none;margin-top:8px;line-height:1.4;}
+    #valSummary.ok  {background:var(--ok-light);color:var(--ok);border:1px solid rgba(26,122,74,.2);display:block;}
+    #valSummary.warn{background:var(--warn-light);color:var(--warn);border:1px solid rgba(160,80,0,.25);display:block;}
+    #valSummary.all-clear{background:var(--ok-light);color:var(--ok);border:1px solid rgba(26,122,74,.2);display:block;}
+    /* ── VERTEX EDITOR ────────────────────────────────────────── */
+    :root{--edit:#1a4a8a;--edit-light:rgba(26,74,138,0.10);}
+    /* Vertex editor modal — slides up from bottom of map */
+    #vtxModal{position:absolute;left:0;right:0;bottom:0;z-index:1800;
+      background:var(--surface);border-top:2px solid rgba(26,74,138,.35);
+      box-shadow:0 -8px 32px rgba(20,20,16,.18);max-height:52dvh;
+      display:none;flex-direction:column;font-family:var(--font);}
+    #vtxModal.open{display:flex;}
+    .vtx-header{display:flex;align-items:center;gap:10px;padding:10px 16px 8px;
+      border-bottom:1px solid var(--border);background:rgba(26,74,138,.06);flex-shrink:0;}
+    .vtx-header-title{font-size:.88rem;font-weight:700;color:var(--edit);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .vtx-header-sub{font-size:.74rem;color:var(--muted);white-space:nowrap;}
+    .vtx-close{background:transparent;border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:.78rem;color:var(--muted);cursor:pointer;flex-shrink:0;}
+    .vtx-close:hover{background:var(--surface-2);}
+    .vtx-body{display:grid;grid-template-columns:240px 1fr;min-height:0;flex:1;}
+    /* Left: coordinate table */
+    .vtx-table-wrap{overflow-y:auto;border-right:1px solid var(--border);padding:8px 0;}
+    table.vtx-table{width:100%;border-collapse:collapse;font-size:.78rem;}
+    .vtx-table thead th{position:sticky;top:0;background:var(--surface-2);padding:5px 10px;
+      font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+      color:var(--muted);text-align:left;border-bottom:1px solid var(--border);}
+    .vtx-table tbody tr{cursor:pointer;transition:background .12s;}
+    .vtx-table tbody tr:hover{background:rgba(26,74,138,.06);}
+    .vtx-table tbody tr.selected{background:rgba(26,74,138,.12);}
+    .vtx-table tbody td{padding:4px 10px;border-bottom:1px solid rgba(0,0,0,.04);}
+    .vtx-idx{color:var(--muted);font-size:.7rem;font-weight:700;width:24px;}
+    .vtx-coord{font-family:monospace;font-size:.76rem;}
+    .vtx-coord-edit{width:100%;font-family:monospace;font-size:.76rem;border:1px solid var(--edit);border-radius:5px;
+      padding:2px 5px;background:rgba(26,74,138,.06);color:var(--text);outline:none;}
+    .vtx-coord-edit:focus{box-shadow:0 0 0 2px rgba(26,74,138,.2);}
+    /* Right: nudge panel */
+    .vtx-nudge{padding:12px 14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+    .vtx-nudge-title{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--edit);}
+    .vtx-nudge-name{font-size:.88rem;font-weight:700;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .vtx-nudge-coord{font-family:monospace;font-size:.78rem;color:var(--muted);}
+    .nudge-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;
+      gap:4px;width:100px;margin:0 auto;}
+    .nudge-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);
+      background:rgba(255,255,255,.8);font-size:.9rem;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .12s,transform .08s;}
+    .nudge-btn:hover{background:rgba(26,74,138,.1);border-color:rgba(26,74,138,.4);}
+    .nudge-btn:active{transform:scale(.9);background:rgba(26,74,138,.18);}
+    .nudge-btn.center{background:var(--edit-light);border-color:rgba(26,74,138,.3);cursor:default;font-size:.62rem;font-weight:700;color:var(--edit);}
+    .nudge-step-row{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);}
+    .nudge-step-row input[type=range]{flex:1;accent-color:var(--edit);}
+    .nudge-step-val{font-family:monospace;font-size:.74rem;font-weight:700;min-width:54px;color:var(--edit);}
+    .vtx-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px;}
+    .btn-edit-save{background:var(--edit);color:#fff;padding:7px 14px;font-size:.82rem;}
+    .btn-edit-save:hover{opacity:.88;}
+    /* Draggable vertex handles on map */
+    .vtx-handle{width:12px;height:12px;background:#1a4a8a;border:2px solid #fff;
+      border-radius:50%;margin-top:-6px;margin-left:-6px;
+      cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.45);transition:transform .1s;}
+    .vtx-handle:hover,.vtx-handle.dragging{transform:scale(1.5);background:#2a6adb;cursor:grabbing;}
+    .vtx-handle.selected{background:#e06000;border-color:#fff;transform:scale(1.4);}
+    /* Edit-mode HUD badge */
+    #editHud{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:1600;
+      background:rgba(26,74,138,.92);color:#fff;border-radius:999px;padding:7px 18px;
+      font-size:.82rem;font-weight:600;white-space:nowrap;display:none;
+      gap:10px;align-items:center;backdrop-filter:blur(8px);box-shadow:var(--shadow);}
+    #editHud.visible{display:flex;}
+    #editHud .ehk{background:rgba(255,255,255,.2);border-radius:5px;padding:1px 7px;font-family:monospace;font-size:.74rem;}
+    /* leaflet popup */
+    .leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:var(--shadow)!important;font-family:var(--font)!important;}
+    .leaflet-popup-content{font-family:var(--font)!important;font-size:14px!important;}
+    .popup-title{font-weight:700;font-size:.95rem;margin-bottom:8px;}
+    .popup-row{display:flex;gap:6px;font-size:.82rem;color:#555;margin-bottom:3px;}
+    .popup-key{font-weight:600;color:#333;min-width:90px;}
+    @media(max-width:880px){
+      .app{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
+      .panel{max-height:44dvh;border-right:none;border-bottom:1px solid var(--border);}
+      #map{height:56dvh;}
+      .hud{top:auto;bottom:16px;right:10px;left:10px;min-width:0;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOAST ─────────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ── EXPORT MODAL ───────────────────────────────────────────────── -->
+<div class="modal-backdrop hidden" id="exportBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+    <h2 id="exportTitle">⬇ Export layers</h2>
+    <p class="modal-sub">Choose a format, select which layers to include, name your file, and download. Exported files reload cleanly back into this viewer.</p>
+
+    <!-- Format -->
+    <div class="modal-section">
+      <label class="section-label">Format</label>
+      <div class="format-row">
+        <div class="format-btn selected" data-fmt="geojson" id="fmtGeojson">
+          <span class="fmt-icon">🗺</span>
+          <span>GeoJSON</span>
+          <span class="fmt-ext">.geojson</span>
+        </div>
+        <div class="format-btn" data-fmt="kml" id="fmtKml">
+          <span class="fmt-icon">📍</span>
+          <span>KML</span>
+          <span class="fmt-ext">.kml · Little Navmap ready</span>
+        </div>
+      </div>
+      <p class="hint" style="margin-top:8px;" id="formatHint">GeoJSON preserves all Batwing style metadata for perfect round-trip reload.</p>
+    </div>
+
+    <!-- Layer selection -->
+    <div class="modal-section">
+      <label class="section-label">Layers to export <span id="selectedCount" style="color:var(--export);"></span></label>
+      <div class="layer-check-list" id="exportLayerList"></div>
+    </div>
+
+    <!-- Metadata edit (active layer) -->
+    <div class="modal-section" id="metaEditSection">
+      <label class="section-label">Layer metadata override <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.72rem;">(applied to all features in selected layers)</span></label>
+      <div class="meta-grid" id="metaGrid">
+        <!-- filled dynamically -->
+      </div>
+    </div>
+
+    <!-- Filename -->
+    <div class="modal-section">
+      <label class="section-label">Filename</label>
+      <div class="filename-row">
+        <input id="exportFilename" type="text" placeholder="batwing-export" spellcheck="false" />
+        <span class="ext-badge" id="exportExt">.geojson</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-g" id="exportCancelBtn">Cancel</button>
+      <button class="btn-export-go" id="exportGoBtn" disabled>⬇ Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── APP ───────────────────────────────────────────────────────── -->
+<div class="app">
+
+  <aside class="panel">
+    <div class="panel-inner">
+
+      <!-- Brand -->
+      <div class="brand">
+        <svg class="bat-logo" viewBox="0 0 38 38" fill="none" aria-label="Batwing logo">
+          <rect width="38" height="38" rx="10" fill="#01696f"/>
+          <path d="M19 26 C14 26 7 22 5 14 C8 16 11 16 13 14 C14 12 16 10 19 10 C22 10 24 12 25 14 C27 16 30 16 33 14 C31 22 24 26 19 26Z"
+            fill="rgba(255,255,255,0.20)" stroke="rgba(255,255,255,0.75)" stroke-width="1.4" stroke-linejoin="round"/>
+          <circle cx="19" cy="20" r="2.2" fill="rgba(255,255,255,0.85)"/>
+          <line x1="19" y1="6" x2="19" y2="9" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+          <line x1="19" y1="29" x2="19" y2="32" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+        </svg>
+        <div class="brand-text">
+          <h1>KML / KMZ / GeoJSON Viewer</h1>
+          <div class="tagline">Batwing Parks & Airspace · Export + Style Memory</div>
+        </div>
+      </div>
+
+      <!-- Basemap -->
+      <div class="card">
+        <div class="card-label">Basemap</div>
+        <p class="hint" style="margin-bottom:8px;">Mapbox Outdoors terrain active. Swap token if needed.</p>
+        <div class="token-row">
+          <input id="mapboxToken" type="text" spellcheck="false"
+            value="" placeholder="Enter your Mapbox public token" />
+          <button class="btn-p" id="applyTokenBtn">Apply</button>
+        </div>
+        <p class="basemap-hint">Get a free token at <a href="https://account.mapbox.com" target="_blank" rel="noopener">mapbox.com</a></p>
+      </div>
+
+      <!-- Load files -->
+      <div class="card">
+        <div class="card-label">Load files</div>
+        <div class="file-drop" id="fileDrop">
+          <input id="fileInput" type="file" accept=".kml,.kmz,.geojson,.json" multiple />
+          <div class="file-drop-icon">📂</div>
+          <div class="fdi-label">Drop files or <strong>click to browse</strong><br/>.kml · .kmz · .geojson · .json</div>
+        </div>
+      </div>
+
+      <!-- Paste KML -->
+      <div class="card">
+        <div class="card-label">Paste KML</div>
+        <textarea id="kmlText" placeholder="Paste a KML document here…"></textarea>
+        <div class="btn-row">
+          <button class="btn-p" id="loadTextBtn">Load KML</button>
+          <button class="btn-g" id="sampleBtn">⬛ WU22 Parks (GeoJSON)</button>
+          <button class="btn-g" id="sampleKmlBtn" style="margin-top:6px;">🗺 WU22 Parks (KML)</button>
+          <button class="btn-d" id="clearBtn">Clear all</button>
+        </div>
+      </div>
+
+      <!-- Draw Tool button (prominent) -->
+      <button class="btn-draw" id="openDrawBtn" style="padding:12px 18px;border-radius:var(--radius-sm);font-size:.92rem;width:100%;margin-bottom:0;">✏️ Draw polygons / airspace</button>
+
+      <!-- Draw Panel (collapsible) -->
+      <div class="card" id="drawPanel" style="display:none;border:1.5px solid rgba(192,80,0,.3);">
+        <div class="card-label" style="color:var(--draw);">✏️ Draw tool <span class="clb" style="background:var(--draw-light);color:var(--draw);border:1px solid rgba(192,80,0,.25);">ACTIVE</span></div>
+
+        <!-- Mode buttons -->
+        <div class="draw-type-grid" id="drawTypeGrid">
+          <button class="draw-type-btn selected" data-type="NationalPark">
+            <span class="dt-icon">🏔</span><span>Park / NF</span>
+          </button>
+          <button class="draw-type-btn" data-type="MOA">
+            <span class="dt-icon">⚠️</span><span>MOA</span>
+          </button>
+          <button class="draw-type-btn" data-type="Restricted">
+            <span class="dt-icon">🚫</span><span>Restricted</span>
+          </button>
+          <button class="draw-type-btn" data-type="CTR">
+            <span class="dt-icon">✈️</span><span>CTR / Class B</span>
+          </button>
+          <button class="draw-type-btn" data-type="Prohibited">
+            <span class="dt-icon">⛔</span><span>Prohibited</span>
+          </button>
+          <button class="draw-type-btn" data-type="custom">
+            <span class="dt-icon">🔷</span><span>Custom</span>
+          </button>
+        </div>
+
+        <!-- Shape metadata -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Shape name</label>
+            <input id="drawName" type="text" placeholder="e.g. R-2508 North" style="font-size:.82rem;padding:7px 10px;" />
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Airspace class</label>
+            <input id="drawClass" type="text" placeholder="B / C / D / MOA…" style="font-size:.82rem;padding:7px 10px;" />
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Region / State</label>
+            <input id="drawRegion" type="text" placeholder="CA" style="font-size:.82rem;padding:7px 10px;" />
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;">Source tag</label>
+            <input id="drawSource" type="text" placeholder="custom" value="custom" style="font-size:.82rem;padding:7px 10px;" />
+          </div>
+        </div>
+
+        <!-- Style pickers -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Fill color</label>
+            <div class="color-row"><input type="color" id="drawFill" value="#d9a12e" /><span id="drawFillHex" style="font-size:.78rem;color:var(--muted);">#d9a12e</span></div>
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Stroke color</label>
+            <div class="color-row"><input type="color" id="drawStroke" value="#7a4f1c" /><span id="drawStrokeHex" style="font-size:.78rem;color:var(--muted);">#7a4f1c</span></div>
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:.72rem;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;margin-bottom:5px;">Fill opacity <span id="drawOpacityVal">0.35</span></label>
+            <input type="range" id="drawOpacity" min="0" max="1" step="0.05" value="0.35" />
+          </div>
+        </div>
+
+        <!-- Draw controls -->
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-draw" id="startDrawBtn" style="flex:1;">🖊 Start drawing</button>
+          <button class="btn-i" id="undoVertexBtn" title="Undo last vertex">↩ Undo</button>
+          <button class="btn-i" id="cancelDrawBtn" style="color:var(--danger);">✕ Cancel</button>
+        </div>
+        <div id="vertexCount" style="margin-top:6px;">Click map to place vertices. Close shape when done.</div>
+
+        <!-- Drawn shapes list -->
+        <div style="margin-top:14px;">
+          <div class="card-label" style="margin-bottom:8px;">Drawn shapes <span id="drawShapeCount" style="color:var(--draw);"></span></div>
+          <div class="shape-list" id="drawShapeList"><div class="shape-empty">No shapes drawn yet.</div></div>
+        </div>
+
+        <!-- Validate + summary -->
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn-validate" id="validateBtn" style="flex:1;">🔍 Validate geometry</button>
+          <button class="btn-i" id="fixAllBtn" style="color:var(--edit);border-color:rgba(26,74,138,.3);display:none;">⚡ Fix all</button>
+        </div>
+        <div id="valSummary"></div>
+
+        <!-- Commit drawn shapes -->
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn-p" id="commitDrawBtn" style="flex:1;">➕ Add shapes as layer</button>
+          <button class="btn-d" id="clearDrawBtn">🗑 Clear all</button>
+        </div>
+        <div class="hint" style="margin-top:6px;">Shapes are added as a new layer you can export as GeoJSON or KML with full <em>_batwing</em> metadata. Run <strong>Validate</strong> first to catch broken geometry.</div>
+      </div>
+
+      <!-- Export button (prominent) -->
+      <button class="btn-export" id="openExportBtn" style="padding:12px 18px;border-radius:var(--radius-sm);font-size:.92rem;width:100%;">
+        ⬇ Export layers as KML / GeoJSON
+      </button>
+
+      <!-- Loaded layers -->
+      <div class="card">
+        <div class="card-label">Loaded layers</div>
+        <div id="layerList" class="layer-list">
+          <div class="layer-empty">No layers loaded yet.</div>
+        </div>
+      </div>
+
+      <!-- Style panel -->
+      <div class="card" id="styleCard" style="display:none">
+        <div class="card-label">
+          Layer style — <span id="styleLayerName" style="text-transform:none;font-style:italic;font-weight:400;"></span>
+        </div>
+        <div class="style-grid">
+          <div class="style-field">
+            <label>Fill color</label>
+            <div class="color-row"><input id="fillColorInput" type="color" value="#e2b857"/></div>
+          </div>
+          <div class="style-field">
+            <label>Stroke color</label>
+            <div class="color-row"><input id="strokeColorInput" type="color" value="#8b5a2b"/></div>
+          </div>
+          <div class="slider-field">
+            <label>Fill opacity <span id="fillOpacityVal">0.40</span></label>
+            <input id="fillOpacityInput" type="range" min="0" max="1" step="0.05" value="0.4"/>
+          </div>
+          <div class="slider-field">
+            <label>Stroke width <span id="strokeWidthVal">2</span>px</label>
+            <input id="strokeWidthInput" type="range" min="1" max="6" step="1" value="2"/>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-save" id="saveStyleBtn">💾 Save style</button>
+          <button class="btn-g" id="resetStyleBtn">Reset</button>
+          <button class="btn-i" id="clearSavedBtn" style="color:var(--danger);">Clear saved</button>
+        </div>
+        <p class="hint">Saved styles persist on the server and auto-apply when the same file is reloaded.</p>
+      </div>
+
+      <!-- Saved presets -->
+      <div class="card">
+        <div class="card-label">
+          Saved style presets
+          <span class="clb clb-green" id="presetCountBadge">0 saved</span>
+        </div>
+        <div id="presetList" class="preset-list">
+          <div class="preset-empty">No presets saved yet.</div>
+        </div>
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn-d" id="clearAllPresetsBtn" style="font-size:.8rem;padding:6px 12px;">Clear all presets</button>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="card">
+        <div class="card-label">Palette legend</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-swatch" style="background:#d9a12e55;border-color:#7a4f1c;"></div><span>National Park</span></div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#e389e755;border-color:#b000b5;"></div><span>Class A</span></div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#6aa3ff55;border-color:#0050d0;"></div><span>Class B</span></div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#5fb0e355;border-color:#0065b3;"></div><span>Class C</span></div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#9bbcf055;border-color:#2d7ad3;"></div><span>Class D</span></div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#e2747455;border-color:#b32626;"></div><span>Restricted</span></div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#c476ad55;border-color:#6c1c4f;"></div><span>Prohibited</span></div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#f0b05055;border-color:#b06010;"></div><span>MOA / Danger</span></div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <main class="map-wrap">
+    <div id="map"></div>
+    <!-- Edit-mode HUD badge (top-center, visible while vertex editor is open) -->
+    <div id="editHud">
+      <span id="editHudLabel">✎ Vertex Editor</span>
+      <span><span class="ehk">Drag</span> vertices</span>
+      <span><span class="ehk">Del</span> remove vertex</span>
+      <span><span class="ehk">Esc</span> close</span>
+    </div>
+
+    <!-- Vertex Editor panel — slides up from bottom of map area -->
+    <div id="vtxModal" role="dialog" aria-modal="true" aria-label="Vertex Editor">
+      <div class="vtx-header">
+        <div>
+          <div class="vtx-header-title" id="vtxShapeName">—</div>
+          <div class="vtx-header-sub" id="vtxShapeSub"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+          <button class="btn-edit-save" id="vtxSaveBtn">✔ Apply changes</button>
+          <button class="vtx-close" id="vtxCloseBtn">✕ Close</button>
+        </div>
+      </div>
+      <div class="vtx-body">
+        <!-- LEFT: scrollable coordinate table -->
+        <div class="vtx-table-wrap">
+          <table class="vtx-table">
+            <thead><tr>
+              <th class="vtx-idx">#</th>
+              <th>Longitude</th>
+              <th>Latitude</th>
+            </tr></thead>
+            <tbody id="vtxTableBody"></tbody>
+          </table>
+        </div>
+        <!-- RIGHT: nudge panel for selected vertex -->
+        <div class="vtx-nudge">
+          <div class="vtx-nudge-title">✎ Selected vertex</div>
+          <div id="vtxNudgeNone" style="font-size:.82rem;color:var(--muted);">Click a vertex handle on the map or a row in the table to select.</div>
+          <div id="vtxNudgePanel" style="display:none;">
+            <div class="vtx-nudge-name" id="vtxNudgeName"></div>
+            <div class="vtx-nudge-coord" id="vtxNudgeCoord"></div>
+            <!-- Directional nudge pad -->
+            <div style="margin:10px 0 4px;">
+              <div class="nudge-grid" id="nudgePad">
+                <button class="nudge-btn" data-dx="-1" data-dy="1">↖</button>
+                <button class="nudge-btn" data-dx="0"  data-dy="1">↑</button>
+                <button class="nudge-btn" data-dx="1"  data-dy="1">↗</button>
+                <button class="nudge-btn" data-dx="-1" data-dy="0">←</button>
+                <button class="nudge-btn center">VTX</button>
+                <button class="nudge-btn" data-dx="1"  data-dy="0">→</button>
+                <button class="nudge-btn" data-dx="-1" data-dy="-1">↙</button>
+                <button class="nudge-btn" data-dx="0"  data-dy="-1">↓</button>
+                <button class="nudge-btn" data-dx="1"  data-dy="-1">↘</button>
+              </div>
+            </div>
+            <!-- Step size slider -->
+            <div class="nudge-step-row">
+              <span>Step</span>
+              <input type="range" id="nudgeStep" min="-4" max="0" step="0.5" value="-3" />
+              <span class="nudge-step-val" id="nudgeStepVal">0.001°</span>
+            </div>
+            <!-- Precise coordinate inputs -->
+            <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+              <div>
+                <label style="font-size:.68rem;color:var(--muted);font-weight:700;display:block;margin-bottom:2px;">Lon (X)</label>
+                <input class="vtx-coord-edit" id="vtxLonInput" type="number" step="0.000001" />
+              </div>
+              <div>
+                <label style="font-size:.68rem;color:var(--muted);font-weight:700;display:block;margin-bottom:2px;">Lat (Y)</label>
+                <input class="vtx-coord-edit" id="vtxLatInput" type="number" step="0.000001" />
+              </div>
+            </div>
+            <div class="vtx-actions">
+              <button class="btn-edit-save" id="vtxApplyCoordBtn">Apply coords</button>
+              <button class="btn-i" id="vtxDeleteVtxBtn" style="color:var(--danger);border-color:rgba(154,37,69,.3);">Del vertex</button>
+              <button class="btn-i" id="vtxInsertAfterBtn" title="Insert new vertex after this one">⊕ Insert after</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Draw HUD bar — visible only while drawing -->
+    <div id="drawHud">
+      <span id="drawHudLabel">Click to place vertex</span>
+      <span><span class="draw-hud-key">○ 1st dot</span> close</span>
+      <span><span class="draw-hud-key">Z</span> undo</span>
+      <span><span class="draw-hud-key">Esc</span> cancel</span>
+    </div>
+    <div class="hud">
+      <div class="hud-title">Batwing Viewer</div>
+      <div id="hud-status">Ready. Load KML, KMZ, or GeoJSON.</div>
+      <div class="hud-chips">
+        <div class="hud-chip">Pinch zoom</div>
+        <div class="hud-chip">Drag pan</div>
+        <div class="hud-chip">Click polygon</div>
+        <div class="hud-chip" id="hudPersistChip" style="background:rgba(26,122,74,.1);color:#1a7a4a;display:none;">💾 Style memory</div>
+        <div class="hud-chip" id="hudExportChip" style="background:var(--export-light);color:var(--export);display:none;cursor:pointer;" title="Open export dialog">⬇ Export</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════════════
+const MAPBOX_TOKEN = ''; // Enter your token in the Basemap panel or set via MAPBOX_TOKEN env
+const API_BASE     = '/api/presets';
+const EXPORT_API   = '/api/export';
+
+// ═══════════════════════════════════════════════════════════════════
+//  SAMPLE DATA
+// ═══════════════════════════════════════════════════════════════════
+const SAMPLE_GEOJSON = {
+  type:'FeatureCollection',
+  features:[
+    {type:'Feature',properties:{name:'Bryce Canyon NP', type:'NationalPark',worldUpdate:'WU22',region:'UT',source:'MSFS_WU22_sample'},geometry:{type:'Polygon',coordinates:[[[-112.22,37.71],[-112.02,37.75],[-111.95,37.63],[-112.03,37.49],[-112.20,37.51],[-112.27,37.61],[-112.22,37.71]]]}},
+    {type:'Feature',properties:{name:'Capitol Reef NP', type:'NationalPark',worldUpdate:'WU22',region:'UT',source:'MSFS_WU22_sample'},geometry:{type:'Polygon',coordinates:[[[-111.28,38.45],[-110.94,38.47],[-110.88,38.19],[-111.04,38.01],[-111.30,38.09],[-111.39,38.28],[-111.28,38.45]]]}},
+    {type:'Feature',properties:{name:'Zion NP',         type:'NationalPark',worldUpdate:'WU22',region:'UT',source:'MSFS_WU22_sample'},geometry:{type:'Polygon',coordinates:[[[-113.19,37.41],[-112.90,37.40],[-112.89,37.16],[-113.12,37.10],[-113.26,37.23],[-113.19,37.41]]]}},
+    {type:'Feature',properties:{name:'Grand Canyon NP', type:'NationalPark',worldUpdate:'WU22',region:'AZ',source:'MSFS_WU22_sample'},geometry:{type:'Polygon',coordinates:[[[-112.50,36.40],[-111.80,36.42],[-111.60,36.10],[-111.85,35.85],[-112.10,35.80],[-112.55,36.00],[-112.50,36.40]]]}},
+    {type:'Feature',properties:{name:'Acadia NP',       type:'NationalPark',worldUpdate:'WU22',region:'ME',source:'MSFS_WU22_sample'},geometry:{type:'Polygon',coordinates:[[[-68.42,44.42],[-68.25,44.44],[-68.20,44.28],[-68.32,44.22],[-68.44,44.32],[-68.42,44.42]]]}},
+    {type:'Feature',properties:{name:'KSLC Class B',    type:'CTR',airspaceClass:'B',region:'UT',source:'MSFS_WU22_sample'},geometry:{type:'Polygon',coordinates:[[[-112.14,40.89],[-111.88,40.87],[-111.83,40.71],[-112.00,40.62],[-112.28,40.66],[-112.33,40.80],[-112.14,40.89]]]}}
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════════════
+//  PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════
+function normalizeKey(label){return label.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+let presetsCache={};
+
+async function fetchPresets(){try{const r=await fetch(API_BASE);presetsCache=await r.json();}catch(_){presetsCache={};}}
+async function savePreset(label,cfg){
+  const key=normalizeKey(label);
+  const body={label,theme:cfg.theme,fillColor:cfg.fillColor,strokeColor:cfg.strokeColor,fillOpacity:cfg.fillOpacity,strokeWidth:cfg.strokeWidth};
+  try{await fetch(`${API_BASE}/${key}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});presetsCache[key]={...body,savedAt:Date.now()};}catch(_){}
+}
+async function deletePreset(label){const key=normalizeKey(label);try{await fetch(`${API_BASE}/${key}`,{method:'DELETE'});}catch(_){} delete presetsCache[key];}
+async function clearAllPresetsAPI(){try{await fetch(API_BASE,{method:'DELETE'});}catch(_){} presetsCache={};}
+function getPresetFromCache(label){return presetsCache[normalizeKey(label)]||null;}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════════════
+let toastTimer=null;
+function showToast(msg,type='success',duration=2800){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className=`show ${type}`;
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{el.className=type;},duration);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PALETTE
+// ═══════════════════════════════════════════════════════════════════
+function getPaletteFor(feature,cfg){
+  const p=feature.properties||{};
+  const type=String(p.type||p.Type||'');
+  const cls=String(p.airspaceClass||p.class||p.Class||'').toUpperCase();
+  let color=cfg.strokeColor,fillColor=cfg.fillColor,fillOpacity=cfg.fillOpacity,weight=cfg.strokeWidth;
+  if(type==='NationalPark'||type==='Park'){color='#7a4f1c';fillColor='#d9a12e';}
+  else if(cls==='A'){color='#b000b5';fillColor='#e389e7';fillOpacity=0.25;}
+  else if(cls==='B'){color='#0050d0';fillColor='#6aa3ff';fillOpacity=0.28;}
+  else if(cls==='C'){color='#0065b3';fillColor='#5fb0e3';fillOpacity=0.25;}
+  else if(cls==='D'){color='#2d7ad3';fillColor='#9bbcf0';fillOpacity=0.18;}
+  else if(cls==='R'||type==='Restricted'){color='#b32626';fillColor='#e27474';}
+  else if(cls==='P'||type==='Prohibited'){color='#6c1c4f';fillColor='#c476ad';}
+  else if(cls==='MOA'||cls==='DANGER'||type==='MOA'){color='#b06010';fillColor='#f0b050';}
+  return{color,weight,opacity:.95,fillColor,fillOpacity};
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MAP
+// ═══════════════════════════════════════════════════════════════════
+const map=L.map('map',{zoomControl:true,preferCanvas:true}).setView([38.5,-110.0],6);
+let currentTileLayer=null;
+function setTileLayer(token){
+  if(currentTileLayer){map.removeLayer(currentTileLayer);currentTileLayer=null;}
+  if(token&&token.startsWith('pk.')){
+    currentTileLayer=L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${token}`,
+      {maxZoom:18,tileSize:512,zoomOffset:-1,attribution:'© <a href="https://www.mapbox.com/">Mapbox</a> © <a href="https://www.openstreetmap.org/copyright">OSM</a>'}).addTo(map);
+  }else{
+    currentTileLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {maxZoom:18,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+  }
+}
+setTileLayer(MAPBOX_TOKEN);
+document.getElementById('applyTokenBtn').addEventListener('click',()=>{setTileLayer(document.getElementById('mapboxToken').value.trim());setStatus('Basemap updated.');});
+
+// ═══════════════════════════════════════════════════════════════════
+//  LAYER REGISTRY
+// ═══════════════════════════════════════════════════════════════════
+let layerCounter=0,registry=[],activeLayerId=null;
+
+const statusEl=document.getElementById('hud-status');
+const layerListEl=document.getElementById('layerList');
+const styleCard=document.getElementById('styleCard');
+const styleNameEl=document.getElementById('styleLayerName');
+const fillColorInput=document.getElementById('fillColorInput');
+const strokeColorInput=document.getElementById('strokeColorInput');
+const fillOpacityInput=document.getElementById('fillOpacityInput');
+const strokeWidthInput=document.getElementById('strokeWidthInput');
+const fillOpacityVal=document.getElementById('fillOpacityVal');
+const strokeWidthVal=document.getElementById('strokeWidthVal');
+const hudPersistChip=document.getElementById('hudPersistChip');
+const hudExportChip=document.getElementById('hudExportChip');
+
+function setStatus(msg){statusEl.textContent=msg;}
+
+function inferTheme(geojson){
+  let park=0,air=0;
+  (geojson.features||[]).forEach(f=>{
+    const t=String((f.properties||{}).type||'');
+    const cls=String((f.properties||{}).airspaceClass||'');
+    if(t==='NationalPark'||t==='Park')park++;
+    if(cls||['CTR','TMA','Restricted','Prohibited','MOA'].includes(t))air++;
+  });
+  if(park&&!air)return'parks';if(air&&!park)return'airspace';return'mixed';
+}
+
+function defaultStyleConfig(theme){
+  if(theme==='parks')   return{theme,fillColor:'#d9a12e',strokeColor:'#7a4f1c',fillOpacity:.40,strokeWidth:2};
+  if(theme==='airspace')return{theme,fillColor:'#6aa3ff',strokeColor:'#0050d0',fillOpacity:.25,strokeWidth:2};
+  return{theme,fillColor:'#c8c8c8',strokeColor:'#555555',fillOpacity:.30,strokeWidth:2};
+}
+
+function buildPopupHtml(feature,sourceName){
+  const p=feature.properties||{};
+  const name=p.name||p.Name||p.title||'Unnamed shape';
+  const rows=[['Type',p.type||p.Type],['Airspace',p.airspaceClass||p.class],['World Update',p.worldUpdate||p.worldupdate],['Region',p.region||p.state],['Source',p.source||sourceName]]
+    .filter(([,v])=>v).map(([k,v])=>`<div class="popup-row"><span class="popup-key">${k}</span><span>${v}</span></div>`).join('');
+  return`<div style="min-width:210px;font-family:'General Sans',sans-serif;"><div class="popup-title">${name}</div>${rows||'<div style="color:#888;font-size:13px;">No properties.</div>'}</div>`;
+}
+
+// ── _batwing round-trip: restore style if embedded in GeoJSON ─────
+function extractBatwingStyle(geojson){
+  const first=(geojson.features||[]).find(f=>f.properties&&f.properties._batwing);
+  if(!first)return null;
+  const b=first.properties._batwing;
+  if(!b.fillColor||!b.strokeColor)return null;
+  return{theme:b.theme||'mixed',fillColor:b.fillColor,strokeColor:b.strokeColor,fillOpacity:b.fillOpacity??0.4,strokeWidth:b.strokeWidth??2};
+}
+
+// Strip _batwing block from features before displaying (it's internal metadata)
+function stripBatwing(geojson){
+  return{
+    ...geojson,
+    features:(geojson.features||[]).map(f=>{
+      if(!f.properties||!f.properties._batwing)return f;
+      const{_batwing,...rest}=f.properties;
+      return{...f,properties:rest};
+    })
+  };
+}
+
+function addGeoJsonLayer(geojson,label){
+  // Check for embedded _batwing style (round-trip from GeoJSON export)
+  const embedded=extractBatwingStyle(geojson);
+  const clean=stripBatwing(geojson);
+
+  const theme=inferTheme(clean);
+  const saved=getPresetFromCache(label);
+  const cfg=embedded||saved?{...(embedded||saved)}:defaultStyleConfig(theme);
+  const wasRestored=!!(embedded||saved);
+  const restoreSource=embedded?'embedded':'preset';
+  const id=++layerCounter;
+
+  const leafletLayer=L.geoJSON(clean,{
+    style:f=>getPaletteFor(f,cfg),
+    pointToLayer:(f,ll)=>L.circleMarker(ll,{radius:7,color:'#01696f',weight:2,fillColor:'#49a7ac',fillOpacity:.8}),
+    onEachFeature:(f,lyr)=>lyr.bindPopup(buildPopupHtml(f,label),{maxWidth:280})
+  }).addTo(map);
+
+  try{const b=leafletLayer.getBounds();if(b&&b.isValid())map.fitBounds(b,{padding:[40,40]});}catch(_){}
+
+  // Store raw clean features for export
+  const entry={id,name:label,theme:cfg.theme||theme,cfg,leafletLayer,visible:true,
+    count:(clean.features||[]).length,features:clean.features||[],hasSavedStyle:wasRestored};
+  registry.push(entry);
+  activeLayerId=id;
+  renderLayerList();renderStylePanel();renderPresetList();updateChips();
+
+  if(wasRestored){
+    const msg=restoreSource==='embedded'?`📦 Style embedded in file for "${label}" — auto-applied.`:`💾 Style restored for "${label}"`;
+    setStatus(msg);showToast(msg,'success');
+  }else{
+    setStatus(`Loaded ${entry.count} feature${entry.count!==1?'s':''} — "${label}"`);
+  }
+}
+
+// ── Render layers ─────────────────────────────────────────────────
+function renderLayerList(){
+  layerListEl.innerHTML='';
+  if(!registry.length){layerListEl.innerHTML='<div class="layer-empty">No layers loaded yet.</div>';return;}
+  registry.forEach(layer=>{
+    const item=document.createElement('div');
+    item.className='layer-item'+(layer.id===activeLayerId?' active':'');
+    const themeLabel=layer.theme==='parks'?'Parks':layer.theme==='airspace'?'Airspace':'Mixed';
+    const badgeCls=layer.theme==='parks'?'parks':layer.theme==='airspace'?'airspace':'';
+    item.innerHTML=`
+      <div class="layer-header">
+        <div class="layer-name">${layer.name}</div>
+        <div style="display:flex;gap:5px;flex-shrink:0;">
+          ${layer.hasSavedStyle?'<span class="badge saved">💾</span>':''}
+          <span class="badge ${badgeCls}">${themeLabel}</span>
+        </div>
+      </div>
+      <div class="layer-meta">${layer.count} feature${layer.count!==1?'s':''} · ${layer.visible?'Visible':'Hidden'}</div>
+      <div class="layer-controls">
+        <button class="btn-i toggle-btn">${layer.visible?'Hide':'Show'}</button>
+        <button class="btn-i zoom-btn">Zoom</button>
+        <button class="btn-i remove-btn" style="color:var(--danger)">Remove</button>
+      </div>`;
+    item.querySelector('.toggle-btn').addEventListener('click',e=>{
+      e.stopPropagation();layer.visible=!layer.visible;
+      layer.visible?layer.leafletLayer.addTo(map):map.removeLayer(layer.leafletLayer);
+      renderLayerList();
+    });
+    item.querySelector('.zoom-btn').addEventListener('click',e=>{
+      e.stopPropagation();
+      try{const b=layer.leafletLayer.getBounds();if(b&&b.isValid())map.fitBounds(b,{padding:[40,40]});}catch(_){}
+    });
+    item.querySelector('.remove-btn').addEventListener('click',e=>{
+      e.stopPropagation();map.removeLayer(layer.leafletLayer);
+      const idx=registry.findIndex(l=>l.id===layer.id);
+      if(idx>-1)registry.splice(idx,1);
+      if(activeLayerId===layer.id)activeLayerId=registry.length?registry[registry.length-1].id:null;
+      renderLayerList();renderStylePanel();updateChips();
+      setStatus(registry.length?`${registry.reduce((s,l)=>s+l.count,0)} features across ${registry.length} layers.`:'Cleared.');
+    });
+    item.addEventListener('click',()=>{activeLayerId=layer.id;renderLayerList();renderStylePanel();});
+    layerListEl.appendChild(item);
+  });
+}
+
+// ── Style panel ───────────────────────────────────────────────────
+function renderStylePanel(){
+  const layer=registry.find(l=>l.id===activeLayerId);
+  if(!layer){styleCard.style.display='none';return;}
+  styleCard.style.display='block';styleNameEl.textContent=layer.name;
+  fillColorInput.value=layer.cfg.fillColor;strokeColorInput.value=layer.cfg.strokeColor;
+  fillOpacityInput.value=layer.cfg.fillOpacity;strokeWidthInput.value=layer.cfg.strokeWidth;
+  fillOpacityVal.textContent=parseFloat(layer.cfg.fillOpacity).toFixed(2);strokeWidthVal.textContent=layer.cfg.strokeWidth;
+}
+function restyleActive(){
+  const layer=registry.find(l=>l.id===activeLayerId);if(!layer)return;
+  layer.cfg.fillColor=fillColorInput.value;layer.cfg.strokeColor=strokeColorInput.value;
+  layer.cfg.fillOpacity=parseFloat(fillOpacityInput.value);layer.cfg.strokeWidth=parseInt(strokeWidthInput.value,10);
+  fillOpacityVal.textContent=parseFloat(layer.cfg.fillOpacity).toFixed(2);strokeWidthVal.textContent=layer.cfg.strokeWidth;
+  layer.leafletLayer.setStyle(f=>getPaletteFor(f,layer.cfg));
+}
+fillColorInput.addEventListener('input',restyleActive);
+strokeColorInput.addEventListener('input',restyleActive);
+fillOpacityInput.addEventListener('input',restyleActive);
+strokeWidthInput.addEventListener('input',restyleActive);
+
+document.getElementById('saveStyleBtn').addEventListener('click',async()=>{
+  const layer=registry.find(l=>l.id===activeLayerId);if(!layer)return;
+  await savePreset(layer.name,layer.cfg);layer.hasSavedStyle=true;
+  renderLayerList();renderPresetList();updateChips();
+  showToast(`💾 Style saved for "${layer.name}"`, 'success');
+});
+document.getElementById('resetStyleBtn').addEventListener('click',()=>{
+  const layer=registry.find(l=>l.id===activeLayerId);if(!layer)return;
+  Object.assign(layer.cfg,defaultStyleConfig(layer.theme));
+  layer.leafletLayer.setStyle(f=>getPaletteFor(f,layer.cfg));renderStylePanel();showToast('Reset to theme defaults.','info');
+});
+document.getElementById('clearSavedBtn').addEventListener('click',async()=>{
+  const layer=registry.find(l=>l.id===activeLayerId);if(!layer)return;
+  await deletePreset(layer.name);layer.hasSavedStyle=false;
+  renderLayerList();renderPresetList();updateChips();showToast(`Cleared saved style for "${layer.name}".`,'warn');
+});
+
+// ── Preset browser ────────────────────────────────────────────────
+function renderPresetList(){
+  const listEl=document.getElementById('presetList');
+  const countEl=document.getElementById('presetCountBadge');
+  const keys=Object.keys(presetsCache);
+  countEl.textContent=`${keys.length} saved`;
+  if(!keys.length){listEl.innerHTML='<div class="preset-empty">No presets saved yet.</div>';return;}
+  listEl.innerHTML='';
+  keys.sort((a,b)=>(presetsCache[b].savedAt||0)-(presetsCache[a].savedAt||0)).forEach(key=>{
+    const p=presetsCache[key];
+    if(!p||!p.label||!p.fillColor||!p.strokeColor||p.fillOpacity==null||p.strokeWidth==null)return;
+    const item=document.createElement('div');item.className='preset-item';
+    item.innerHTML=`
+      <div class="preset-swatch" style="background:${p.fillColor}88;border-color:${p.strokeColor};"></div>
+      <div style="flex:1;overflow:hidden;">
+        <div class="preset-name" title="${p.label}">${p.label}</div>
+        <div class="preset-theme">${p.theme||'mixed'} · opacity ${parseFloat(p.fillOpacity).toFixed(2)} · stroke ${p.strokeWidth}px</div>
+      </div>
+      <button class="btn-i del-preset" title="Delete" style="color:var(--danger);flex-shrink:0;">✕</button>`;
+    item.querySelector('.del-preset').addEventListener('click',async()=>{
+      await deletePreset(p.label);
+      const layer=registry.find(l=>normalizeKey(l.name)===key);if(layer)layer.hasSavedStyle=false;
+      renderLayerList();renderPresetList();updateChips();showToast(`Deleted preset for "${p.label}".`,'warn');
+    });
+    listEl.appendChild(item);
+  });
+}
+document.getElementById('clearAllPresetsBtn').addEventListener('click',async()=>{
+  await clearAllPresetsAPI();registry.forEach(l=>l.hasSavedStyle=false);
+  renderLayerList();renderPresetList();updateChips();showToast('All style presets cleared.','warn');
+});
+
+function updateChips(){
+  const count=Object.keys(presetsCache).length;
+  hudPersistChip.style.display=count>0?'block':'none';
+  hudPersistChip.textContent=`💾 ${count} preset${count!==1?'s':''}`;
+  hudExportChip.style.display=registry.length>0?'block':'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  EXPORT MODAL
+// ═══════════════════════════════════════════════════════════════════
+let exportFormat='geojson';
+
+const exportBackdrop=document.getElementById('exportBackdrop');
+const exportGoBtn=document.getElementById('exportGoBtn');
+const exportFilename=document.getElementById('exportFilename');
+const exportExt=document.getElementById('exportExt');
+const exportLayerList=document.getElementById('exportLayerList');
+const formatHint=document.getElementById('formatHint');
+const selectedCount=document.getElementById('selectedCount');
+const metaGrid=document.getElementById('metaGrid');
+
+const FORMAT_HINTS={
+  geojson:'GeoJSON preserves all Batwing style metadata for perfect round-trip reload into this viewer.',
+  kml:'KML uses embedded <Style> elements — ready for Little Navmap, Google Earth, and any KML-compatible tool. Style metadata echoed in ExtendedData for round-trip.',
+};
+
+function openExportModal(){
+  if(!registry.length){showToast('Load at least one layer before exporting.','warn');return;}
+  exportBackdrop.classList.remove('hidden');
+  rebuildExportLayerList();
+  rebuildMetaGrid();
+  updateExportGoBtn();
+}
+
+function closeExportModal(){exportBackdrop.classList.add('hidden');}
+
+function rebuildExportLayerList(){
+  exportLayerList.innerHTML='';
+  registry.forEach(layer=>{
+    const item=document.createElement('label');
+    item.className='layer-check-item';
+    const cb=document.createElement('input');
+    cb.type='checkbox';cb.checked=true;cb.dataset.layerId=layer.id;
+    cb.addEventListener('change',()=>{updateExportGoBtn();rebuildMetaGrid();});
+    const info=document.createElement('div');
+    info.innerHTML=`<div class="layer-check-label">${layer.name}</div><div class="layer-check-meta">${layer.count} feature${layer.count!==1?'s':''} · ${layer.theme} · fill ${layer.cfg.fillColor} · opacity ${parseFloat(layer.cfg.fillOpacity).toFixed(2)}</div>`;
+    item.appendChild(cb);item.appendChild(info);
+    exportLayerList.appendChild(item);
+  });
+  updateSelectedCount();
+}
+
+function getCheckedLayerIds(){
+  return Array.from(exportLayerList.querySelectorAll('input[type=checkbox]:checked')).map(cb=>parseInt(cb.dataset.layerId,10));
+}
+
+function updateSelectedCount(){
+  const n=getCheckedLayerIds().length;
+  selectedCount.textContent=n?`(${n} selected)`:'';
+}
+
+function updateExportGoBtn(){
+  updateSelectedCount();
+  exportGoBtn.disabled=getCheckedLayerIds().length===0;
+}
+
+// Meta overrides — show fields for checked layers' common properties
+function rebuildMetaGrid(){
+  const ids=getCheckedLayerIds();
+  const layers=registry.filter(l=>ids.includes(l.id));
+  // Offer worldUpdate and source as common override fields
+  metaGrid.innerHTML='';
+  const fields=[
+    {key:'worldUpdate',label:'World Update',placeholder:'WU22'},
+    {key:'source',     label:'Source tag',   placeholder:'MSFS_WU22_press'},
+  ];
+  fields.forEach(({key,label,placeholder})=>{
+    // gather existing values across selected layers' first features
+    const existingVals=[...new Set(layers.flatMap(l=>l.features.slice(0,1).map(f=>(f.properties||{})[key]).filter(Boolean)))];
+    const div=document.createElement('div');div.className='meta-field';
+    div.innerHTML=`<label>${label}</label><input type="text" id="meta_${key}" placeholder="${existingVals[0]||placeholder}" style="font-size:.82rem;padding:7px 10px;"/>`;
+    metaGrid.appendChild(div);
+  });
+}
+
+// Format buttons
+document.getElementById('fmtGeojson').addEventListener('click',()=>{
+  exportFormat='geojson';
+  document.getElementById('fmtGeojson').classList.add('selected');
+  document.getElementById('fmtKml').classList.remove('selected');
+  exportExt.textContent='.geojson';
+  formatHint.textContent=FORMAT_HINTS.geojson;
+});
+document.getElementById('fmtKml').addEventListener('click',()=>{
+  exportFormat='kml';
+  document.getElementById('fmtKml').classList.add('selected');
+  document.getElementById('fmtGeojson').classList.remove('selected');
+  exportExt.textContent='.kml';
+  formatHint.textContent=FORMAT_HINTS.kml;
+});
+
+// Open/close
+document.getElementById('openExportBtn').addEventListener('click',openExportModal);
+hudExportChip.addEventListener('click',openExportModal);
+document.getElementById('exportCancelBtn').addEventListener('click',closeExportModal);
+exportBackdrop.addEventListener('click',e=>{if(e.target===exportBackdrop)closeExportModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeExportModal();});
+
+// Execute export
+exportGoBtn.addEventListener('click',async()=>{
+  const ids=getCheckedLayerIds();
+  if(!ids.length)return;
+
+  const metaWorldUpdate=(document.getElementById('meta_worldUpdate')||{}).value||'';
+  const metaSource     =(document.getElementById('meta_source')||{}).value||'';
+
+  const layers=registry.filter(l=>ids.includes(l.id)).map(layer=>({
+    name:   layer.name,
+    theme:  layer.theme,
+    cfg:    layer.cfg,
+    features: layer.features.map(f=>({
+      ...f,
+      properties:{
+        ...(f.properties||{}),
+        ...(metaWorldUpdate?{worldUpdate:metaWorldUpdate}:{}),
+        ...(metaSource     ?{source:metaSource}:{}),
+      }
+    }))
+  }));
+
+  const filename=exportFilename.value.trim()||'batwing-export';
+  const body={format:exportFormat,filename,layers};
+
+  exportGoBtn.disabled=true;
+  exportGoBtn.textContent='Exporting…';
+
+  try{
+    const res=await fetch(EXPORT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok){const err=await res.json();throw new Error(err.error||'Export failed');}
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=filename+(exportFormat==='kml'?'.kml':'.geojson');
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    closeExportModal();
+    showToast(`⬇ Exported "${filename}.${exportFormat}" (${ids.length} layer${ids.length!==1?'s':''})`, 'export', 3500);
+    setStatus(`Exported ${ids.length} layer${ids.length!==1?'s':''} as ${exportFormat.toUpperCase()}.`);
+  }catch(err){
+    showToast(`Export error: ${err.message}`,'warn');
+  }finally{
+    exportGoBtn.disabled=false;exportGoBtn.textContent='⬇ Download';
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  FILE HANDLING
+// ═══════════════════════════════════════════════════════════════════
+function parseKmlString(text,label){
+  try{const dom=new DOMParser().parseFromString(text,'text/xml');addGeoJsonLayer(toGeoJSON.kml(dom),label);}
+  catch(e){setStatus(`Parse error: ${e.message}`);}
+}
+async function handleFile(file){
+  const n=file.name.toLowerCase();
+  if(n.endsWith('.geojson')||n.endsWith('.json')){try{addGeoJsonLayer(JSON.parse(await file.text()),file.name);}catch(e){setStatus(`JSON error: ${e.message}`);}return;}
+  if(n.endsWith('.kml')){parseKmlString(await file.text(),file.name);return;}
+  if(n.endsWith('.kmz')){
+    try{const zip=new JSZip();await zip.loadAsync(await file.arrayBuffer());const kmlName=Object.keys(zip.files).find(k=>k.toLowerCase().endsWith('.kml'));if(!kmlName){setStatus(`No KML in ${file.name}`);return;}parseKmlString(await zip.files[kmlName].async('text'),`${file.name} ∙ ${kmlName}`);}
+    catch(e){setStatus(`KMZ error: ${e.message}`);}return;
+  }
+  setStatus(`Unsupported: ${file.name}`);
+}
+
+const fileDrop=document.getElementById('fileDrop');
+fileDrop.addEventListener('dragover',e=>{e.preventDefault();fileDrop.classList.add('dragover');});
+fileDrop.addEventListener('dragleave',()=>fileDrop.classList.remove('dragover'));
+fileDrop.addEventListener('drop',async e=>{
+  e.preventDefault();fileDrop.classList.remove('dragover');
+  for(const f of Array.from(e.dataTransfer.files))await handleFile(f);
+});
+document.getElementById('fileInput').addEventListener('change',async e=>{
+  for(const f of Array.from(e.target.files||[]))await handleFile(f);
+  e.target.value='';
+});
+document.getElementById('loadTextBtn').addEventListener('click',()=>{
+  const text=document.getElementById('kmlText').value.trim();
+  if(!text){setStatus('Paste KML first.');return;}parseKmlString(text,'Pasted KML');
+});
+document.getElementById('sampleBtn').addEventListener('click',async()=>{
+  setStatus('Fetching WU22 parks GeoJSON…');
+  try{
+    const r=await fetch('/wu22_parks.geojson');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const gj=await r.json();
+    addGeoJsonLayer(gj,'WU22 National Parks (GeoJSON)');
+  }catch(err){
+    setStatus('Failed to load GeoJSON: '+err.message);
+  }
+});
+document.getElementById('sampleKmlBtn').addEventListener('click',async()=>{
+  setStatus('Fetching WU22 parks KML…');
+  try{
+    const r=await fetch('/wu22_parks.kml');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const text=await r.text();
+    parseKmlString(text,'WU22 National Parks (KML)');
+  }catch(err){
+    setStatus('Failed to load KML: '+err.message);
+  }
+});
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  registry.forEach(l=>map.removeLayer(l.leafletLayer));registry.length=0;activeLayerId=null;
+  renderLayerList();renderStylePanel();updateChips();setStatus('Cleared. Style presets still saved on server.');
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  DRAW TOOL
+// ═══════════════════════════════════════════════════════════════════
+const DRAW_TYPES = {
+  NationalPark: { label:'Park / NF',  fillColor:'#d9a12e', strokeColor:'#7a4f1c', fillOpacity:0.35 },
+  MOA:          { label:'MOA',        fillColor:'#f0b050', strokeColor:'#b06010', fillOpacity:0.28 },
+  Restricted:   { label:'Restricted', fillColor:'#e27474', strokeColor:'#b32626', fillOpacity:0.28 },
+  CTR:          { label:'CTR',        fillColor:'#6aa3ff', strokeColor:'#0050d0', fillOpacity:0.28 },
+  Prohibited:   { label:'Prohibited', fillColor:'#c476ad', strokeColor:'#6c1c4f', fillOpacity:0.28 },
+  custom:       { label:'Custom',     fillColor:'#a0cfa0', strokeColor:'#2a6a2a', fillOpacity:0.30 },
+};
+
+let drawActive   = false;   // cursor on map, clicking vertices
+let drawVertices = [];      // [L.LatLng, ...] current in-progress polygon
+let drawMarkers  = [];      // L.Marker nodes shown on map
+let drawPolyline = null;    // L.Polyline preview
+let drawPreviewPoly = null; // L.Polygon filled preview
+let drawnShapes  = [];      // finalized shapes: [{name,type,fillColor,strokeColor,fillOpacity,coords,leafletPoly}]
+let currentDrawType = 'NationalPark';
+let drawPanelOpen = false;
+
+const drawPanel   = document.getElementById('drawPanel');
+const drawHud     = document.getElementById('drawHud');
+const drawHudLbl  = document.getElementById('drawHudLabel');
+const vertexCountEl = document.getElementById('vertexCount');
+const shapeListEl   = document.getElementById('drawShapeList');
+const shapeCountEl  = document.getElementById('drawShapeCount');
+const drawFillInput = document.getElementById('drawFill');
+const drawStrokeInput = document.getElementById('drawStroke');
+const drawFillHex   = document.getElementById('drawFillHex');
+const drawStrokeHex = document.getElementById('drawStrokeHex');
+const drawOpacityInput = document.getElementById('drawOpacity');
+const drawOpacityVal   = document.getElementById('drawOpacityVal');
+
+// Sync color pickers → hex labels
+drawFillInput.addEventListener('input', () => { drawFillHex.textContent = drawFillInput.value; });
+drawStrokeInput.addEventListener('input', () => { drawStrokeHex.textContent = drawStrokeInput.value; });
+drawOpacityInput.addEventListener('input', () => { drawOpacityVal.textContent = parseFloat(drawOpacityInput.value).toFixed(2); });
+
+// Open / close draw panel
+document.getElementById('openDrawBtn').addEventListener('click', () => {
+  drawPanelOpen = !drawPanelOpen;
+  drawPanel.style.display = drawPanelOpen ? 'block' : 'none';
+  document.getElementById('openDrawBtn').classList.toggle('active', drawPanelOpen);
+  if (!drawPanelOpen) stopDrawing(false);
+});
+
+// Type selector
+document.getElementById('drawTypeGrid').querySelectorAll('.draw-type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.draw-type-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentDrawType = btn.dataset.type;
+    const def = DRAW_TYPES[currentDrawType] || DRAW_TYPES.custom;
+    drawFillInput.value   = def.fillColor;
+    drawStrokeInput.value = def.strokeColor;
+    drawOpacityInput.value = def.fillOpacity;
+    drawFillHex.textContent   = def.fillColor;
+    drawStrokeHex.textContent = def.strokeColor;
+    drawOpacityVal.textContent = def.fillOpacity.toFixed(2);
+  });
+});
+
+// ── Drawing state machine ──────────────────────────────────────────
+function startDrawing() {
+  if (drawActive) return;
+  drawActive = true;
+  map.getContainer().classList.add('leaflet-draw-cursor');
+  drawHud.classList.add('visible');
+  updateVertexCount();
+  document.getElementById('startDrawBtn').textContent = '⏹ Finish shape';
+  document.getElementById('startDrawBtn').classList.add('active');
+  setStatus('Drawing — click map to place vertices. Click the green dot to close.');
+}
+
+function stopDrawing(finalize) {
+  if (finalize && drawVertices.length >= 3) {
+    finalizeShape();
+  } else if (finalize) {
+    showToast('Need at least 3 vertices to close a shape.', 'warn');
+  }
+  clearDrawPreview();
+  drawActive = false;
+  drawVertices = [];
+  drawMarkers = [];
+  map.getContainer().classList.remove('leaflet-draw-cursor');
+  drawHud.classList.remove('visible');
+  document.getElementById('startDrawBtn').textContent = '🖊 Start drawing';
+  document.getElementById('startDrawBtn').classList.remove('active');
+  updateVertexCount();
+  setStatus(drawnShapes.length ? `${drawnShapes.length} shape${drawnShapes.length>1?'s':''} drawn. Add as layer when ready.` : 'Ready.');
+}
+
+function clearDrawPreview() {
+  drawMarkers.forEach(m => map.removeLayer(m));
+  drawMarkers = [];
+  if (drawPolyline)  { map.removeLayer(drawPolyline);  drawPolyline  = null; }
+  if (drawPreviewPoly) { map.removeLayer(drawPreviewPoly); drawPreviewPoly = null; }
+}
+
+function getCurrentStyle() {
+  return {
+    fillColor:   drawFillInput.value,
+    strokeColor: drawStrokeInput.value,
+    fillOpacity: parseFloat(drawOpacityInput.value),
+  };
+}
+
+function rebuildPreview() {
+  // Polyline (outline while drawing)
+  if (drawPolyline) map.removeLayer(drawPolyline);
+  if (drawVertices.length > 1) {
+    const s = getCurrentStyle();
+    drawPolyline = L.polyline(drawVertices, {
+      color: s.strokeColor, weight: 2.5, dashArray: '7 5', opacity: 0.9
+    }).addTo(map);
+  }
+  // Filled preview polygon
+  if (drawPreviewPoly) map.removeLayer(drawPreviewPoly);
+  if (drawVertices.length >= 3) {
+    const s = getCurrentStyle();
+    drawPreviewPoly = L.polygon(drawVertices, {
+      color: s.strokeColor, weight: 2, opacity: 0.9,
+      fillColor: s.fillColor, fillOpacity: s.fillOpacity * 0.7
+    }).addTo(map);
+  }
+}
+
+function addVertex(latlng) {
+  const s = getCurrentStyle();
+  const isFirst = drawVertices.length === 0;
+  drawVertices.push(latlng);
+
+  // Create vertex marker
+  const icon = L.divIcon({
+    className: isFirst ? 'draw-vertex-marker first' : 'draw-vertex-marker',
+    iconSize: isFirst ? [14, 14] : [10, 10],
+    iconAnchor: isFirst ? [7, 7] : [5, 5],
+  });
+  const marker = L.marker(latlng, { icon, interactive: isFirst, zIndexOffset: 1000 }).addTo(map);
+  // First marker click = close polygon
+  if (isFirst) {
+    marker.on('click', (e) => {
+      L.DomEvent.stop(e);
+      if (drawVertices.length >= 3) stopDrawing(true);
+      else showToast('Need at least 3 vertices first.', 'warn');
+    });
+    marker.setTooltipContent('Click to close shape');
+    marker.bindTooltip('Click to close shape', { permanent: false, direction: 'top', offset: [0, -12] });
+  }
+  drawMarkers.push(marker);
+  rebuildPreview();
+  updateVertexCount();
+}
+
+function undoLastVertex() {
+  if (!drawActive || drawVertices.length === 0) return;
+  drawVertices.pop();
+  const m = drawMarkers.pop();
+  if (m) map.removeLayer(m);
+  rebuildPreview();
+  updateVertexCount();
+}
+
+function updateVertexCount() {
+  const n = drawVertices.length;
+  if (!drawActive) {
+    vertexCountEl.textContent = 'Click "Start drawing" then click the map to place vertices.';
+    return;
+  }
+  if (n === 0) vertexCountEl.textContent = 'Click the map to place your first vertex.';
+  else if (n < 3) vertexCountEl.textContent = `${n} vert${n>1?'ices':'ex'} — need at least 3 to close.`;
+  else vertexCountEl.textContent = `${n} vertices — click the green dot or "Finish shape" to close.`;
+  drawHudLbl.textContent = n >= 3 ? `${n} vertices — click ○ to close` : `${n} vert${n>1?'ices':'ex'} placed`;
+}
+
+// ── Map click handler for drawing ────────────────────────────────────
+map.on('click', (e) => {
+  if (!drawActive) return;
+  addVertex(e.latlng);
+});
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (!drawPanelOpen) return;
+  if (e.key === 'Escape') { stopDrawing(false); showToast('Drawing cancelled.', 'warn'); }
+  if ((e.key === 'z' || e.key === 'Z') && !e.ctrlKey && !e.metaKey) undoLastVertex();
+  if (e.key === 'Enter' && drawActive) stopDrawing(true);
+});
+
+// ── Button wiring ────────────────────────────────────────────────────
+document.getElementById('startDrawBtn').addEventListener('click', () => {
+  if (drawActive) stopDrawing(true);
+  else startDrawing();
+});
+document.getElementById('undoVertexBtn').addEventListener('click', undoLastVertex);
+document.getElementById('cancelDrawBtn').addEventListener('click', () => {
+  stopDrawing(false);
+  showToast('Drawing cancelled.', 'warn');
+});
+
+// Live re-preview when style changes during drawing
+[drawFillInput, drawStrokeInput, drawOpacityInput].forEach(el => {
+  el.addEventListener('input', () => { if (drawActive) rebuildPreview(); });
+});
+
+// ── Finalize: commit completed polygon to drawnShapes ──────────────
+function finalizeShape() {
+  const name = document.getElementById('drawName').value.trim() ||
+    `${(DRAW_TYPES[currentDrawType]||{label:'Custom'}).label} ${drawnShapes.length + 1}`;
+  const airClass = document.getElementById('drawClass').value.trim();
+  const region   = document.getElementById('drawRegion').value.trim();
+  const source   = document.getElementById('drawSource').value.trim() || 'custom';
+  const s = getCurrentStyle();
+
+  // Close the ring: duplicate first vertex at end
+  const ring = [...drawVertices, drawVertices[0]];
+  const coords = ring.map(ll => [ll.lng, ll.lat]); // GeoJSON order
+
+  // Draw a permanent polygon on the map
+  const poly = L.polygon(drawVertices, {
+    color: s.strokeColor, weight: 2.5, opacity: 0.95,
+    fillColor: s.fillColor, fillOpacity: s.fillOpacity
+  }).addTo(map);
+
+  const shape = {
+    id: Date.now(),
+    name, type: currentDrawType,
+    airspaceClass: airClass, region, source,
+    fillColor: s.fillColor, strokeColor: s.strokeColor, fillOpacity: s.fillOpacity,
+    coords,   // [[lon,lat], ...] closed
+    leafletPoly: poly
+  };
+
+  poly.bindPopup(`<div style="font-family:'General Sans',sans-serif;min-width:180px;">
+    <div class="popup-title">${name}</div>
+    <div class="popup-row"><span class="popup-key">Type</span>${currentDrawType}</div>
+    ${airClass ? `<div class="popup-row"><span class="popup-key">Class</span>${airClass}</div>` : ''}
+    ${region   ? `<div class="popup-row"><span class="popup-key">Region</span>${region}</div>` : ''}
+    <div class="popup-row"><span class="popup-key">Source</span>${source}</div>
+  </div>`, {maxWidth:260});
+
+  drawnShapes.push(shape);
+  renderShapeList();
+  showToast(`✏️ "${name}" added (${drawVertices.length} vertices)`, 'success');
+  // Auto-increment name suffix for next shape
+  const baseName = document.getElementById('drawName').value.trim();
+  if (baseName) {
+    const match = baseName.match(/(.*?)(\s+\d+)?$/);
+    if (match) document.getElementById('drawName').value = '';
+  }
+}
+
+// ── Shape list rendering ──────────────────────────────────────────────
+function renderShapeList() {
+  shapeCountEl.textContent = drawnShapes.length ? `(${drawnShapes.length})` : '';
+  if (!drawnShapes.length) {
+    shapeListEl.innerHTML = '<div class="shape-empty">No shapes drawn yet.</div>';
+    return;
+  }
+  shapeListEl.innerHTML = '';
+  drawnShapes.forEach(shape => {
+    const item = document.createElement('div');
+    const {badgeHtml, issueHtml, stateClass} = buildValidationMarkup(shape);
+    item.className = 'shape-item' + (stateClass ? ' ' + stateClass : '');
+    item.innerHTML = `
+      <div class="shape-dot" style="background:${shape.fillColor};border:2px solid ${shape.strokeColor};flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <span class="shape-name" title="${shape.name}">${shape.name}</span>
+          ${badgeHtml}
+        </div>
+        ${issueHtml}
+      </div>
+      <div class="shape-controls">
+        <button class="btn-i edit-vtx" title="Edit vertices" style="color:var(--edit);border-color:rgba(26,74,138,.3);">✎</button>
+        <button class="btn-i zoom-shape" title="Zoom to shape">⌖</button>
+        <button class="btn-i del-shape" title="Delete" style="color:var(--danger);">✕</button>
+      </div>`;
+    item.querySelector('.edit-vtx').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openVertexEditor(shape);
+    });
+    item.querySelector('.zoom-shape').addEventListener('click', e => {
+      e.stopPropagation();
+      try { map.fitBounds(shape.leafletPoly.getBounds(), {padding:[40,40]}); } catch(_) {}
+    });
+    item.querySelector('.del-shape').addEventListener('click', e => {
+      e.stopPropagation();
+      invalidateValCache(shape.id);
+      map.removeLayer(shape.leafletPoly);
+      drawnShapes = drawnShapes.filter(s => s.id !== shape.id);
+      renderShapeList();
+    });
+    shapeListEl.appendChild(item);
+  });
+}
+
+// ── Clear all drawn shapes ────────────────────────────────────────────
+document.getElementById('clearDrawBtn').addEventListener('click', () => {
+  if (!drawnShapes.length) return;
+  drawnShapes.forEach(s => map.removeLayer(s.leafletPoly));
+  drawnShapes = [];
+  stopDrawing(false);
+  renderShapeList();
+  showToast('All drawn shapes cleared.', 'warn');
+});
+
+// ── Commit: convert drawnShapes → GeoJSON layer ───────────────────────
+document.getElementById('commitDrawBtn').addEventListener('click', () => {
+  if (!drawnShapes.length) { showToast('Draw at least one shape first.', 'warn'); return; }
+
+  const ts = new Date().toISOString().slice(0,16).replace('T',' ');
+  const layerName = `Custom Draw ${ts}`;
+
+  const features = drawnShapes.map(shape => ({
+    type: 'Feature',
+    geometry: { type: 'Polygon', coordinates: [shape.coords] },
+    properties: {
+      name: shape.name,
+      type: shape.type,
+      airspaceClass: shape.airspaceClass || undefined,
+      region: shape.region || undefined,
+      source: shape.source,
+      worldUpdate: '',
+      _batwing: {
+        layerName,
+        theme: shape.type === 'NationalPark' ? 'parks' : 'airspace',
+        fillColor:   shape.fillColor,
+        strokeColor: shape.strokeColor,
+        fillOpacity: shape.fillOpacity,
+        strokeWidth: 2
+      }
+    }
+  }));
+
+  const geojson = { type:'FeatureCollection', features };
+
+  // Remove drawn markers from map (addGeoJsonLayer will re-render)
+  drawnShapes.forEach(s => map.removeLayer(s.leafletPoly));
+  drawnShapes = [];
+  stopDrawing(false);
+  renderShapeList();
+
+  addGeoJsonLayer(geojson, layerName);
+  showToast(`✅ Layer "${layerName}" created with ${features.length} shape${features.length>1?'s':''}! Export it via ⬇.`, 'success', 4000);
+  setStatus(`Layer "${layerName}" ready — use Export to save as GeoJSON or KML.`);
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  GEOMETRY VALIDATION ENGINE
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Primitive geometry helpers ─────────────────────────────────────────
+
+// 2-D cross product of vectors (b-a) x (c-a)
+function cross2d(ax,ay, bx,by, cx,cy){
+  return (bx-ax)*(cy-ay) - (by-ay)*(cx-ax);
+}
+
+// Signed area ×2 of open ring [[lon,lat],...]
+function signedArea2(ring){
+  let a = 0;
+  for(let i=0,n=ring.length;i<n;i++){
+    const j=(i+1)%n;
+    a += ring[i][0]*ring[j][1] - ring[j][0]*ring[i][1];
+  }
+  return a;
+}
+
+// Does segment p1→p2 properly intersect segment p3→p4?
+// "Properly" = endpoints not shared, true crossing only.
+function segmentsIntersect(ax,ay,bx,by, cx,cy,dx,dy){
+  const d1=cross2d(cx,cy,dx,dy,ax,ay);
+  const d2=cross2d(cx,cy,dx,dy,bx,by);
+  const d3=cross2d(ax,ay,bx,by,cx,cy);
+  const d4=cross2d(ax,ay,bx,by,dx,dy);
+  if(((d1>0&&d2<0)||(d1<0&&d2>0))&&((d3>0&&d4<0)||(d3<0&&d4>0))) return true;
+  return false;
+}
+
+// ── Validate a single shape ─────────────────────────────────────────────
+// Returns {valid:bool, issues:[{code, msg, severity, fixable}], ring:[open ring]}
+function validateShape(shape){
+  // Normalise: strip closing duplicate, work with open ring [[lon,lat],...]
+  const raw = shape.coords;
+  const last = raw[raw.length-1];
+  const isClosed = raw.length>1 && last[0]===raw[0][0] && last[1]===raw[0][1];
+  const ring = isClosed ? raw.slice(0,-1) : [...raw];
+
+  const issues = [];
+
+  // 1. Minimum vertex count
+  if(ring.length < 3){
+    issues.push({code:'TOO_FEW', msg:`Only ${ring.length} vertex${ring.length===1?'':'es'} — need ≥3.`, severity:'error', fixable:false});
+  }
+
+  // 2. Bounds check — lon ∈ [-180,180], lat ∈ [-90,90]
+  const OOB = ring.reduce((acc,c,i)=>{
+    if(c[0]<-180||c[0]>180||c[1]<-90||c[1]>90) acc.push(i+1);
+    return acc;
+  },[]);
+  if(OOB.length){
+    issues.push({code:'OUT_OF_BOUNDS', msg:`${OOB.length} vertex${OOB.length>1?'es are':' is'} outside [-180→180, -90←90]: verts ${OOB.slice(0,4).join(', ')}${OOB.length>4?'…':''}`, severity:'error', fixable:true});
+  }
+
+  // 3. Duplicate / coincident consecutive vertices
+  const DUPE_EPS = 1e-9;
+  const dupes = [];
+  for(let i=0;i<ring.length;i++){
+    const j=(i+1)%ring.length;
+    const dx=ring[i][0]-ring[j][0], dy=ring[i][1]-ring[j][1];
+    if(Math.abs(dx)<DUPE_EPS && Math.abs(dy)<DUPE_EPS) dupes.push(i+1);
+  }
+  if(dupes.length){
+    issues.push({code:'DUPLICATE_VERTS', msg:`${dupes.length} consecutive duplicate vertex${dupes.length>1?'es':''} (verts ${dupes.slice(0,3).join(', ')}${dupes.length>3?'…':''}).`, severity:'warn', fixable:true});
+  }
+
+  // 4. Self-intersection — O(n²) segment pair scan
+  // Only worth running when ring is small enough not to freeze
+  const MAX_SELF_SCAN = 400;
+  const intersections = [];
+  if(ring.length >= 3 && ring.length <= MAX_SELF_SCAN){
+    for(let i=0;i<ring.length;i++){
+      const i1=(i+1)%ring.length;
+      for(let j=i+2;j<ring.length;j++){
+        const j1=(j+1)%ring.length;
+        if(i===0 && j1===ring.length-1) continue; // adjacent at wrap
+        const [ax,ay]=ring[i],  [bx,by]=ring[i1];
+        const [cx,cy]=ring[j],  [dx,dy]=ring[j1];
+        if(segmentsIntersect(ax,ay,bx,by,cx,cy,dx,dy)){
+          intersections.push([i+1,i1+1,j+1,j1+1]);
+        }
+      }
+    }
+    if(intersections.length){
+      const shown=intersections.slice(0,3).map(([a,b,c,d])=>`${a}→${b}⨯${c}→${d}`).join(', ');
+      issues.push({code:'SELF_INTERSECT', msg:`${intersections.length} self-intersecting edge pair${intersections.length>1?'s':''}: ${shown}${intersections.length>3?' …':''}`, severity:'error', fixable:true, count:intersections.length});
+    }
+  } else if(ring.length > MAX_SELF_SCAN){
+    issues.push({code:'TOO_LARGE_TO_SCAN', msg:`${ring.length} vertices — self-intersection scan skipped (limit ${MAX_SELF_SCAN}). Consider splitting.`, severity:'info', fixable:false});
+  }
+
+  // 5. Winding order — GeoJSON exterior rings must be CCW (positive signed area)
+  const sa2 = signedArea2(ring);
+  const isCW = sa2 < 0;
+  if(isCW && ring.length >= 3){
+    issues.push({code:'WRONG_WINDING', msg:'Ring is clockwise — GeoJSON spec requires counter-clockwise exterior rings.', severity:'warn', fixable:true});
+  }
+
+  // 6. Zero-area degenerate (collinear)
+  if(Math.abs(sa2) < 1e-12 && ring.length >= 3){
+    issues.push({code:'ZERO_AREA', msg:'Polygon has near-zero area — vertices may be collinear.', severity:'error', fixable:false});
+  }
+
+  return { valid: issues.filter(i=>i.severity==='error').length===0, issues, ring };
+}
+
+// ── Auto-fix a single shape ───────────────────────────────────────────────
+// Returns {ring, fixesApplied:[string], unfixable:[string]}
+function autoFixShape(shape, result){
+  let ring = result.ring.map(c=>[...c]); // mutable deep copy
+  const fixesApplied = [];
+  const unfixable    = [];
+
+  result.issues.forEach(issue=>{
+    if(!issue.fixable){ unfixable.push(issue.code); return; }
+
+    switch(issue.code){
+
+      // ─ Clamp out-of-bounds coordinates to valid range
+      case 'OUT_OF_BOUNDS':{
+        let clamped=0;
+        ring = ring.map(c=>{
+          const lon=Math.max(-180,Math.min(180,c[0]));
+          const lat=Math.max(-90, Math.min(90, c[1]));
+          if(lon!==c[0]||lat!==c[1]) clamped++;
+          return[lon,lat];
+        });
+        if(clamped) fixesApplied.push(`Clamped ${clamped} out-of-bounds vertex${clamped>1?'es':''}`);
+        break;
+      }
+
+      // ─ Remove consecutive duplicate vertices
+      case 'DUPLICATE_VERTS':{
+        const DUPE_EPS=1e-9;
+        const before=ring.length;
+        const clean=[];
+        for(let i=0;i<ring.length;i++){
+          const j=(i+1)%ring.length;
+          const dx=ring[i][0]-ring[j][0],dy=ring[i][1]-ring[j][1];
+          if(Math.abs(dx)>=DUPE_EPS||Math.abs(dy)>=DUPE_EPS) clean.push(ring[i]);
+        }
+        if(clean.length>=3){
+          ring=clean;
+          const removed=before-clean.length;
+          if(removed) fixesApplied.push(`Removed ${removed} duplicate vertex${removed>1?'es':''}`);
+        }
+        break;
+      }
+
+      // ─ Fix winding order (reverse ring)
+      case 'WRONG_WINDING':{
+        ring = ring.slice().reverse();
+        fixesApplied.push('Reversed ring to counter-clockwise winding');
+        break;
+      }
+
+      // ─ Resolve self-intersections via convex hull fallback
+      case 'SELF_INTERSECT':{
+        // Strategy 1: try reversing (sometimes fixes a figure-8)
+        const reversed = ring.slice().reverse();
+        const revResult = validateShape({coords:[...reversed,reversed[0]]});
+        const revIntersects = revResult.issues.find(i=>i.code==='SELF_INTERSECT');
+        if(!revIntersects){
+          ring = reversed;
+          fixesApplied.push('Resolved self-intersection by reversing vertex order');
+          break;
+        }
+        // Strategy 2: convex hull — always simple, preserves the bounding shape
+        const hull = convexHull(ring);
+        if(hull.length >= 3){
+          ring = hull;
+          fixesApplied.push(`Self-intersection resolved via convex hull (${hull.length} hull vertices from ${result.ring.length} original)`);
+        } else {
+          unfixable.push('SELF_INTERSECT (hull failed)');
+        }
+        break;
+      }
+    }
+  });
+
+  return { ring, fixesApplied, unfixable };
+}
+
+// ── Convex hull (Graham scan) on [[lon,lat],...] ────────────────────────
+// Returns CCW open ring.
+function convexHull(pts){
+  const n=pts.length;
+  if(n<3) return pts;
+  // Sort by lon, then lat
+  const sorted=[...pts].sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const lower=[], upper=[];
+  for(let i=0;i<n;i++){
+    while(lower.length>=2&&cross2d(
+      lower[lower.length-2][0],lower[lower.length-2][1],
+      lower[lower.length-1][0],lower[lower.length-1][1],
+      sorted[i][0],sorted[i][1])<=0) lower.pop();
+    lower.push(sorted[i]);
+  }
+  for(let i=n-1;i>=0;i--){
+    while(upper.length>=2&&cross2d(
+      upper[upper.length-2][0],upper[upper.length-2][1],
+      upper[upper.length-1][0],upper[upper.length-1][1],
+      sorted[i][0],sorted[i][1])<=0) upper.pop();
+    upper.push(sorted[i]);
+  }
+  // Remove last point of each half (it's the start of the other)
+  lower.pop(); upper.pop();
+  const hull=[...lower,...upper];
+  // Ensure CCW
+  if(signedArea2(hull)<0) hull.reverse();
+  return hull;
+}
+
+// ── Rebuild a shape's polygon on the map from a new ring ─────────────
+function rebuildShapePoly(shape, newRing){
+  // Closed ring for storage
+  const closed = [...newRing, newRing[0]];
+  shape.coords = closed;
+  // Rebuild Leaflet polygon
+  map.removeLayer(shape.leafletPoly);
+  const poly = L.polygon(newRing.map(c=>[c[1],c[0]]),{
+    color:shape.strokeColor, weight:2.5, opacity:.95,
+    fillColor:shape.fillColor, fillOpacity:shape.fillOpacity
+  }).addTo(map);
+  poly.bindPopup(`<div style="font-family:'General Sans',sans-serif;min-width:180px;">
+    <div class="popup-title">${shape.name}</div>
+    <div class="popup-row"><span class="popup-key">Type</span>${shape.type}</div>
+    <div class="popup-row"><span class="popup-key">Vertices</span>${newRing.length}</div>
+    <div class="popup-row"><span class="popup-key">Source</span>${shape.source}</div>
+  </div>`,{maxWidth:260});
+  shape.leafletPoly = poly;
+}
+
+// ── Validation state cache (keyed by shape.id) ──────────────────────
+const valCache = new Map(); // id → {valid, issues, fixesApplied, wasFixed}
+
+// ── Run validation across all shapes ───────────────────────────────────
+function runValidation(){
+  if(!drawnShapes.length){ showToast('No shapes to validate.','warn'); return; }
+  valCache.clear();
+  let errCount=0, warnCount=0, okCount=0;
+
+  drawnShapes.forEach(shape=>{
+    const result = validateShape(shape);
+    const errors = result.issues.filter(i=>i.severity==='error');
+    const warns  = result.issues.filter(i=>i.severity==='warn');
+    valCache.set(shape.id,{
+      valid: result.valid, issues: result.issues,
+      fixesApplied:[], wasFixed:false
+    });
+    if(errors.length) errCount++;
+    else if(warns.length) warnCount++;
+    else okCount++;
+  });
+
+  // Show/hide Fix All button
+  const anyBad = errCount+warnCount > 0;
+  document.getElementById('fixAllBtn').style.display = anyBad?'':'none';
+
+  // Summary banner
+  const sumEl = document.getElementById('valSummary');
+  if(!anyBad){
+    sumEl.className='all-clear';
+    sumEl.textContent=`✔ All ${okCount} shape${okCount>1?'s are':' is'} valid — safe to export.`;
+  } else {
+    sumEl.className='warn';
+    const parts=[];
+    if(errCount) parts.push(`${errCount} error${errCount>1?'s':''}`);
+    if(warnCount) parts.push(`${warnCount} warning${warnCount>1?'s':''}`);
+    if(okCount)   parts.push(`${okCount} OK`);
+    sumEl.textContent=`⚠ ${parts.join(' · ')} — click Fix all to repair, or edit vertices manually.`;
+  }
+
+  renderShapeList(); // re-render with badges
+  setStatus(`Validation complete: ${errCount} errors, ${warnCount} warnings, ${okCount} OK.`);
+  if(anyBad) showToast(`⚠ ${errCount+warnCount} issue${errCount+warnCount>1?'s':''} found. Use Fix all or edit manually.`,'warn',3500);
+  else       showToast('✔ All shapes valid!','success');
+}
+
+// ── Run auto-fix on all shapes with issues ───────────────────────────
+function runFixAll(){
+  let fixed=0, partial=0, failed=0;
+
+  drawnShapes.forEach(shape=>{
+    const cached = valCache.get(shape.id);
+    if(!cached || cached.valid) return; // skip already-ok
+
+    const result = validateShape(shape); // fresh scan
+    const fixable = result.issues.some(i=>i.fixable);
+    if(!fixable){ failed++; return; }
+
+    const {ring, fixesApplied, unfixable} = autoFixShape(shape, result);
+    if(fixesApplied.length===0){ failed++; return; }
+
+    // Apply repaired ring back to shape
+    rebuildShapePoly(shape, ring);
+
+    // Re-validate after fix
+    const recheck = validateShape(shape);
+    const stillBad = recheck.issues.filter(i=>i.severity==='error').length;
+    valCache.set(shape.id,{
+      valid: recheck.valid,
+      issues: recheck.issues.filter(i=>!fixesApplied.some(f=>f.startsWith(i.code))),
+      fixesApplied,
+      wasFixed: true,
+      unfixable
+    });
+
+    if(stillBad===0) fixed++;
+    else { partial++; }
+  });
+
+  renderShapeList();
+
+  // Update summary
+  const sumEl = document.getElementById('valSummary');
+  if(fixed+partial>0){
+    sumEl.className = partial>0 ? 'warn' : 'all-clear';
+    const msg=[];
+    if(fixed)   msg.push(`${fixed} shape${fixed>1?'s':''} fully repaired`);
+    if(partial) msg.push(`${partial} partially fixed — manual edit recommended`);
+    if(failed)  msg.push(`${failed} could not be auto-fixed`);
+    sumEl.textContent = (partial>0?'⚠ ':'✔ ') + msg.join(' · ') + '.';
+    showToast(`⚡ Fixed ${fixed+partial} shape${fixed+partial>1?'s':''}. ${partial?'Some need manual review.':''}`, fixed+partial>0?'success':'warn', 3500);
+  } else {
+    sumEl.className='warn';
+    sumEl.textContent='⚠ Auto-fix could not resolve remaining issues — use the vertex editor.';
+    showToast('Auto-fix had nothing to repair.','warn');
+  }
+
+  setStatus(`Fix complete: ${fixed} repaired, ${partial} partial, ${failed} failed.`);
+}
+
+// ── Render shape list with validation badges ───────────────────────────
+function buildValidationMarkup(shape){
+  const cached = valCache.get(shape.id);
+  if(!cached) return { badgeHtml:'', issueHtml:'', stateClass:'' };
+
+  const errors  = cached.issues.filter(i=>i.severity==='error');
+  const warns   = cached.issues.filter(i=>i.severity==='warn');
+  const fixes   = cached.fixesApplied||[];
+
+  let badgeHtml='';
+  let stateClass='';
+
+  if(cached.wasFixed && errors.length===0){
+    badgeHtml=`<span class="vbadge fixed">⚡ fixed</span>`;
+    stateClass='fixed';
+  } else if(errors.length){
+    badgeHtml=`<span class="vbadge warn">⚠ ${errors.length} error${errors.length>1?'s':''}</span>`;
+    stateClass='invalid';
+  } else if(warns.length){
+    badgeHtml=`<span class="vbadge warn">⚠ ${warns.length} warn</span>`;
+    stateClass='invalid';
+  } else {
+    badgeHtml=`<span class="vbadge ok">✔ valid</span>`;
+    stateClass='valid';
+  }
+
+  // Issue detail rows
+  const allIssues = cached.issues;
+  let issueHtml='';
+  if(allIssues.length||fixes.length){
+    issueHtml='<div class="issue-list">';
+    allIssues.forEach(issue=>{
+      const icon = issue.severity==='error'?'⚠️': issue.severity==='warn'?'⚡':'ℹ️';
+      issueHtml+=`<div class="issue-row"><span class="issue-icon">${icon}</span><span>${issue.msg}${issue.fixable?' <em style="opacity:.7">(fixable)</em>':''}</span></div>`;
+    });
+    fixes.forEach(f=>{
+      issueHtml+=`<div class="issue-row fixed-row"><span class="issue-icon">✔</span><span>${f}</span></div>`;
+    });
+    if(cached.unfixable&&cached.unfixable.length){
+      cached.unfixable.forEach(u=>{
+        issueHtml+=`<div class="issue-row"><span class="issue-icon">❌</span><span>Could not auto-fix: ${u} — use vertex editor</span></div>`;
+      });
+    }
+    issueHtml+='</div>';
+  }
+
+  return { badgeHtml, issueHtml, stateClass };
+}
+
+// ── Wiring ────────────────────────────────────────────────────────────
+document.getElementById('validateBtn').addEventListener('click', runValidation);
+document.getElementById('fixAllBtn').addEventListener('click', runFixAll);
+// Clear validation state when shapes change
+function invalidateValCache(id){ if(id) valCache.delete(id); else valCache.clear(); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  VERTEX EDITOR
+// ═══════════════════════════════════════════════════════════════════
+
+let vtxShape      = null;   // shape currently being edited
+let vtxCoords     = [];     // working copy: [[lon,lat], ...] open ring (no duplicate close)
+let vtxHandles    = [];     // L.Marker[] draggable handles
+let vtxEditPoly   = null;   // live L.Polygon shown during edit
+let vtxSelectedIdx= -1;     // index of currently selected vertex
+
+const vtxModal    = document.getElementById('vtxModal');
+const vtxTableBody= document.getElementById('vtxTableBody');
+const vtxShapeNameEl = document.getElementById('vtxShapeName');
+const vtxShapeSubEl  = document.getElementById('vtxShapeSub');
+const editHudEl   = document.getElementById('editHud');
+const vtxNudgePanel = document.getElementById('vtxNudgePanel');
+const vtxNudgeNone  = document.getElementById('vtxNudgeNone');
+const vtxNudgeName  = document.getElementById('vtxNudgeName');
+const vtxNudgeCoord = document.getElementById('vtxNudgeCoord');
+const vtxLonInput   = document.getElementById('vtxLonInput');
+const vtxLatInput   = document.getElementById('vtxLatInput');
+const nudgeStepInput= document.getElementById('nudgeStep');
+const nudgeStepValEl= document.getElementById('nudgeStepVal');
+
+// ── Nudge step helper ─────────────────────────────────────────────────
+function getNudgeStep() { return Math.pow(10, parseFloat(nudgeStepInput.value)); }
+function formatStep(v) {
+  if (v >= 1)    return `${v}°`;
+  if (v >= 0.01) return `${v.toFixed(3)}°`;
+  return `${v.toFixed(6)}°`;
+}
+nudgeStepInput.addEventListener('input', () => {
+  nudgeStepValEl.textContent = formatStep(getNudgeStep());
+});
+// set initial label
+nudgeStepValEl.textContent = formatStep(getNudgeStep());
+
+// ── Open vertex editor for a shape ───────────────────────────────────
+function openVertexEditor(shape) {
+  // If already editing another shape, close cleanly first
+  if (vtxShape) closeVertexEditor(false);
+
+  vtxShape = shape;
+  // Working copy: strip the closing duplicate if present
+  const raw = shape.coords; // [[lon,lat],...]
+  const last = raw[raw.length - 1];
+  const first = raw[0];
+  const isClosed = last[0] === first[0] && last[1] === first[1];
+  vtxCoords = (isClosed ? raw.slice(0, -1) : [...raw]).map(c => [...c]);
+  vtxSelectedIdx = -1;
+
+  // Hide the original polygon (show edit version instead)
+  map.removeLayer(shape.leafletPoly);
+
+  // Build editable polygon
+  vtxEditPoly = L.polygon(vtxCoords.map(c => [c[1], c[0]]), {
+    color: shape.strokeColor, weight: 2.5, opacity: 0.95,
+    fillColor: shape.fillColor, fillOpacity: shape.fillOpacity,
+    dashArray: '6 4'
+  }).addTo(map);
+
+  // Build draggable handles
+  buildHandles();
+
+  // UI
+  vtxShapeNameEl.textContent = shape.name;
+  vtxShapeSubEl.textContent  = `${vtxCoords.length} vertices · ${shape.type}`;
+  vtxModal.classList.add('open');
+  editHudEl.classList.add('visible');
+  document.getElementById('editHud').querySelector('#editHudLabel').textContent = `✎ ${shape.name}`;
+
+  renderVtxTable();
+  // Zoom to shape
+  try { map.fitBounds(vtxEditPoly.getBounds(), {padding:[60,60], animate:true}); } catch(_) {}
+  setStatus(`Vertex editor open — ${vtxCoords.length} vertices. Drag, nudge, or type exact coords.`);
+}
+
+// ── Build / rebuild draggable handles ─────────────────────────────────
+function buildHandles() {
+  // Clear old
+  vtxHandles.forEach(h => map.removeLayer(h));
+  vtxHandles = [];
+
+  vtxCoords.forEach((coord, idx) => {
+    const isSelected = idx === vtxSelectedIdx;
+    const icon = L.divIcon({
+      className: `vtx-handle${isSelected ? ' selected' : ''}`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6],
+    });
+    const marker = L.marker([coord[1], coord[0]], {
+      icon,
+      draggable: true,
+      zIndexOffset: 2000 + idx,
+      title: `Vertex ${idx + 1}: ${coord[0].toFixed(6)}, ${coord[1].toFixed(6)}`
+    }).addTo(map);
+
+    // Click: select vertex
+    marker.on('click', (e) => {
+      L.DomEvent.stop(e);
+      selectVertex(idx);
+    });
+
+    // Drag: live-update polygon + coord array
+    marker.on('drag', (e) => {
+      const ll = e.target.getLatLng();
+      vtxCoords[idx] = [parseFloat(ll.lng.toFixed(7)), parseFloat(ll.lat.toFixed(7))];
+      // Update handle element class
+      e.target.getElement()?.classList.add('dragging');
+      updateEditPoly();
+      // If this vertex is selected, update nudge panel live
+      if (vtxSelectedIdx === idx) syncNudgePanel();
+      updateTableRow(idx);
+    });
+
+    marker.on('dragend', (e) => {
+      const ll = e.target.getLatLng();
+      vtxCoords[idx] = [parseFloat(ll.lng.toFixed(7)), parseFloat(ll.lat.toFixed(7))];
+      e.target.getElement()?.classList.remove('dragging');
+      updateEditPoly();
+      selectVertex(idx); // snap selection to this vertex after drag
+      renderVtxTable();
+    });
+
+    vtxHandles.push(marker);
+  });
+}
+
+// ── Update the live edit polygon from vtxCoords ─────────────────────────
+function updateEditPoly() {
+  if (!vtxEditPoly || vtxCoords.length < 2) return;
+  vtxEditPoly.setLatLngs(vtxCoords.map(c => [c[1], c[0]]));
+}
+
+// ── Vertex selection (highlights handle + fills nudge panel) ───────────
+function selectVertex(idx) {
+  vtxSelectedIdx = idx;
+  // Update handle classes
+  vtxHandles.forEach((h, i) => {
+    const el = h.getElement();
+    if (!el) return;
+    el.className = `vtx-handle${i === idx ? ' selected' : ''}`;
+  });
+  // Highlight table row
+  vtxTableBody.querySelectorAll('tr').forEach((tr, i) => {
+    tr.classList.toggle('selected', i === idx);
+  });
+  // Scroll table to row
+  const row = vtxTableBody.querySelectorAll('tr')[idx];
+  if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  syncNudgePanel();
+}
+
+function syncNudgePanel() {
+  if (vtxSelectedIdx < 0 || vtxSelectedIdx >= vtxCoords.length) {
+    vtxNudgeNone.style.display = '';
+    vtxNudgePanel.style.display = 'none';
+    return;
+  }
+  vtxNudgeNone.style.display = 'none';
+  vtxNudgePanel.style.display = '';
+  const [lon, lat] = vtxCoords[vtxSelectedIdx];
+  vtxNudgeName.textContent = `Vertex ${vtxSelectedIdx + 1} of ${vtxCoords.length}`;
+  vtxNudgeCoord.textContent = `${lon.toFixed(6)}, ${lat.toFixed(6)}`;
+  vtxLonInput.value = lon.toFixed(6);
+  vtxLatInput.value = lat.toFixed(6);
+}
+
+// ── Render the full coordinate table ───────────────────────────────────
+function renderVtxTable() {
+  vtxTableBody.innerHTML = '';
+  vtxCoords.forEach((coord, idx) => {
+    const tr = document.createElement('tr');
+    if (idx === vtxSelectedIdx) tr.classList.add('selected');
+    tr.innerHTML = `
+      <td class="vtx-idx">${idx + 1}</td>
+      <td><input class="vtx-coord-edit" data-idx="${idx}" data-axis="lon"
+            value="${coord[0].toFixed(6)}" type="number" step="0.000001" /></td>
+      <td><input class="vtx-coord-edit" data-idx="${idx}" data-axis="lat"
+            value="${coord[1].toFixed(6)}" type="number" step="0.000001" /></td>`;
+    tr.addEventListener('click', (e) => {
+      if (e.target.tagName === 'INPUT') return; // let input handle focus
+      selectVertex(idx);
+    });
+    // Inline edit: on change commit immediately
+    tr.querySelectorAll('input').forEach(input => {
+      input.addEventListener('change', () => commitInlineEdit(input));
+      input.addEventListener('focus', () => selectVertex(idx));
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { commitInlineEdit(input); e.target.blur(); }
+        if (e.key === 'Escape') { e.target.value = coord[e.target.dataset.axis==='lon'?0:1].toFixed(6); e.target.blur(); }
+        // Tab moves to next vertex
+        if (e.key === 'Tab' && !e.shiftKey && input.dataset.axis === 'lat') {
+          e.preventDefault();
+          commitInlineEdit(input);
+          const nextIdx = (idx + 1) % vtxCoords.length;
+          selectVertex(nextIdx);
+          const nextRow = vtxTableBody.querySelectorAll('tr')[nextIdx];
+          if (nextRow) { nextRow.scrollIntoView({block:'nearest'}); nextRow.querySelector('input').focus(); }
+        }
+      });
+    });
+    vtxTableBody.appendChild(tr);
+  });
+  vtxShapeSubEl.textContent = `${vtxCoords.length} vertices · ${vtxShape?.type || ''}`;
+}
+
+function commitInlineEdit(input) {
+  const idx  = parseInt(input.dataset.idx, 10);
+  const axis = input.dataset.axis;
+  const val  = parseFloat(input.value);
+  if (isNaN(val)) return;
+  if (axis === 'lon') vtxCoords[idx][0] = val;
+  else                vtxCoords[idx][1] = val;
+  // Move the corresponding handle
+  if (vtxHandles[idx]) vtxHandles[idx].setLatLng([vtxCoords[idx][1], vtxCoords[idx][0]]);
+  updateEditPoly();
+  if (vtxSelectedIdx === idx) syncNudgePanel();
+}
+
+// Lightweight single-row update (during drag, avoid full re-render)
+function updateTableRow(idx) {
+  const rows = vtxTableBody.querySelectorAll('tr');
+  if (!rows[idx]) return;
+  const inputs = rows[idx].querySelectorAll('input');
+  if (inputs[0]) inputs[0].value = vtxCoords[idx][0].toFixed(6);
+  if (inputs[1]) inputs[1].value = vtxCoords[idx][1].toFixed(6);
+}
+
+// ── Nudge pad ──────────────────────────────────────────────────────────
+function applyNudge(dx, dy) {
+  if (vtxSelectedIdx < 0 || vtxSelectedIdx >= vtxCoords.length) return;
+  const step = getNudgeStep();
+  vtxCoords[vtxSelectedIdx][0] = parseFloat((vtxCoords[vtxSelectedIdx][0] + dx * step).toFixed(7));
+  vtxCoords[vtxSelectedIdx][1] = parseFloat((vtxCoords[vtxSelectedIdx][1] + dy * step).toFixed(7));
+  // Move handle
+  if (vtxHandles[vtxSelectedIdx]) {
+    vtxHandles[vtxSelectedIdx].setLatLng([vtxCoords[vtxSelectedIdx][1], vtxCoords[vtxSelectedIdx][0]]);
+  }
+  updateEditPoly();
+  updateTableRow(vtxSelectedIdx);
+  syncNudgePanel();
+}
+
+document.getElementById('nudgePad').querySelectorAll('.nudge-btn[data-dx]').forEach(btn => {
+  // Support held-down repeat
+  let interval = null;
+  const fire = () => applyNudge(parseFloat(btn.dataset.dx), parseFloat(btn.dataset.dy));
+  btn.addEventListener('mousedown', () => { fire(); interval = setInterval(fire, 120); });
+  btn.addEventListener('mouseup',   () => { clearInterval(interval); });
+  btn.addEventListener('mouseleave',() => { clearInterval(interval); });
+  // Touch
+  btn.addEventListener('touchstart', e => { e.preventDefault(); fire(); interval = setInterval(fire, 120); });
+  btn.addEventListener('touchend',   () => clearInterval(interval));
+});
+
+// ── Precise coord inputs ───────────────────────────────────────────────
+document.getElementById('vtxApplyCoordBtn').addEventListener('click', () => {
+  if (vtxSelectedIdx < 0) return;
+  const lon = parseFloat(vtxLonInput.value);
+  const lat = parseFloat(vtxLatInput.value);
+  if (isNaN(lon) || isNaN(lat)) { showToast('Invalid coordinates.', 'warn'); return; }
+  vtxCoords[vtxSelectedIdx] = [lon, lat];
+  if (vtxHandles[vtxSelectedIdx]) vtxHandles[vtxSelectedIdx].setLatLng([lat, lon]);
+  updateEditPoly();
+  updateTableRow(vtxSelectedIdx);
+  syncNudgePanel();
+  showToast(`Vertex ${vtxSelectedIdx + 1} moved.`, 'info');
+});
+
+// Commit on Enter in either coord input
+[vtxLonInput, vtxLatInput].forEach(inp => {
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('vtxApplyCoordBtn').click(); });
+});
+
+// ── Delete vertex ──────────────────────────────────────────────────────
+document.getElementById('vtxDeleteVtxBtn').addEventListener('click', () => {
+  if (vtxSelectedIdx < 0) return;
+  if (vtxCoords.length <= 3) { showToast('Cannot delete — minimum 3 vertices required.', 'warn'); return; }
+  vtxCoords.splice(vtxSelectedIdx, 1);
+  vtxSelectedIdx = Math.min(vtxSelectedIdx, vtxCoords.length - 1);
+  buildHandles();
+  updateEditPoly();
+  renderVtxTable();
+  selectVertex(vtxSelectedIdx);
+  showToast(`Vertex deleted. ${vtxCoords.length} remaining.`, 'info');
+});
+
+// ── Insert vertex after selected ───────────────────────────────────────
+document.getElementById('vtxInsertAfterBtn').addEventListener('click', () => {
+  if (vtxSelectedIdx < 0 || vtxCoords.length < 2) return;
+  const cur = vtxCoords[vtxSelectedIdx];
+  const nextIdx = (vtxSelectedIdx + 1) % vtxCoords.length;
+  const nxt = vtxCoords[nextIdx];
+  // Midpoint between current and next
+  const mid = [
+    parseFloat(((cur[0] + nxt[0]) / 2).toFixed(7)),
+    parseFloat(((cur[1] + nxt[1]) / 2).toFixed(7))
+  ];
+  vtxCoords.splice(vtxSelectedIdx + 1, 0, mid);
+  buildHandles();
+  updateEditPoly();
+  renderVtxTable();
+  selectVertex(vtxSelectedIdx + 1);
+  showToast(`Vertex inserted at midpoint between ${vtxSelectedIdx + 1} and ${nextIdx + 1}.`, 'info');
+});
+
+// ── Apply changes button: write coords back to shape and close ──────
+function applyAndClose() {
+  if (!vtxShape) return;
+  // Reconstruct closed ring
+  const closed = [...vtxCoords, vtxCoords[0]];
+  vtxShape.coords = closed;
+
+  // Rebuild the permanent polygon on the map
+  if (vtxShape.leafletPoly) map.removeLayer(vtxShape.leafletPoly);
+  const newPoly = L.polygon(vtxCoords.map(c => [c[1], c[0]]), {
+    color: vtxShape.strokeColor, weight: 2.5, opacity: 0.95,
+    fillColor: vtxShape.fillColor, fillOpacity: vtxShape.fillOpacity
+  }).addTo(map);
+  newPoly.bindPopup(`<div style="font-family:'General Sans',sans-serif;min-width:180px;">
+    <div class="popup-title">${vtxShape.name}</div>
+    <div class="popup-row"><span class="popup-key">Type</span>${vtxShape.type}</div>
+    <div class="popup-row"><span class="popup-key">Vertices</span>${vtxCoords.length}</div>
+    <div class="popup-row"><span class="popup-key">Source</span>${vtxShape.source}</div>
+  </div>`, {maxWidth:260});
+  vtxShape.leafletPoly = newPoly;
+
+  invalidateValCache(vtxShape.id); // stale validation results after vertex edits
+  showToast(`✔ "${vtxShape.name}" saved — ${vtxCoords.length} vertices.`, 'success');
+  setStatus(`Vertex edits applied to "${vtxShape.name}". ${drawnShapes.length} shape${drawnShapes.length>1?'s':''} total.`);
+  closeVertexEditor(false); // skip re-adding polygon (already added above)
+}
+
+document.getElementById('vtxSaveBtn').addEventListener('click', applyAndClose);
+
+// ── Close without saving ─────────────────────────────────────────────────
+function closeVertexEditor(restoreOriginal = true) {
+  // Remove edit handles and preview polygon
+  vtxHandles.forEach(h => map.removeLayer(h));
+  vtxHandles = [];
+  if (vtxEditPoly) { map.removeLayer(vtxEditPoly); vtxEditPoly = null; }
+
+  // Restore original polygon if discarding changes
+  if (restoreOriginal && vtxShape) {
+    vtxShape.leafletPoly.addTo(map);
+  }
+
+  vtxModal.classList.remove('open');
+  editHudEl.classList.remove('visible');
+  vtxShape = null;
+  vtxCoords = [];
+  vtxSelectedIdx = -1;
+  setStatus('Vertex editor closed.');
+}
+
+document.getElementById('vtxCloseBtn').addEventListener('click', () => {
+  if (vtxShape) {
+    // Confirm discard if any changes were made (simple heuristic: just close)
+    closeVertexEditor(true);
+    showToast('Changes discarded.', 'warn');
+  }
+});
+
+// Keyboard: Esc closes, Del deletes selected vertex
+document.addEventListener('keydown', (e) => {
+  if (!vtxModal.classList.contains('open')) return;
+  if (e.key === 'Escape') { closeVertexEditor(true); showToast('Vertex editor closed.', 'info'); }
+  if (e.key === 'Delete' && document.activeElement?.tagName !== 'INPUT') {
+    document.getElementById('vtxDeleteVtxBtn').click();
+  }
+  // Arrow keys nudge selected vertex
+  const arrowMap = { ArrowUp:[0,1], ArrowDown:[0,-1], ArrowLeft:[-1,0], ArrowRight:[1,0] };
+  if (arrowMap[e.key] && document.activeElement?.tagName !== 'INPUT') {
+    e.preventDefault();
+    const [dx, dy] = arrowMap[e.key];
+    applyNudge(dx, dy);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════════════
+(async()=>{
+  await fetchPresets();
+  renderLayerList();renderPresetList();updateChips();
+  const count=Object.keys(presetsCache).length;
+  if(count>0)showToast(`💾 ${count} style preset${count!==1?'s':''} ready`,'info',2000);
+})();
+</script>
+</body>
+</html>

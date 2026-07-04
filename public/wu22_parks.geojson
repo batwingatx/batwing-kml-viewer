@@ -1,0 +1,1255 @@
+{
+  "type": "FeatureCollection",
+  "name": "MSFS_WU22_US_National_Parks",
+  "description": "31 Areas of Interest from Microsoft Flight Simulator World Update 22: US National Parks (July 4, 2026). Bounding-box polygon approximations suitable for KML viewer overlay use.",
+  "metadata": {
+    "worldUpdate": "WU22",
+    "releaseDate": "2026-07-04",
+    "totalAOIs": 31,
+    "source": "MSFS_WU22",
+    "generatedBy": "Batwing / Perplexity Computer",
+    "notes": "Coordinates are conservative bounding-box approximations. Not to be used for airspace or navigation decisions."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -68.42,
+              44.01
+            ],
+            [
+              -68.1,
+              44.01
+            ],
+            [
+              -68.1,
+              44.45
+            ],
+            [
+              -68.42,
+              44.45
+            ],
+            [
+              -68.42,
+              44.01
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Acadia National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "ME",
+        "region": "Northeast",
+        "source": "MSFS_WU22",
+        "description": "Rugged Atlantic coastline, granite peaks, and carriage roads on Mount Desert Island."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -109.8,
+              38.58
+            ],
+            [
+              -109.51,
+              38.58
+            ],
+            [
+              -109.51,
+              38.83
+            ],
+            [
+              -109.8,
+              38.83
+            ],
+            [
+              -109.8,
+              38.58
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Arches National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "UT",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Over 2,000 natural sandstone arches including Delicate Arch, near Moab."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -102.65,
+              43.58
+            ],
+            [
+              -101.87,
+              43.58
+            ],
+            [
+              -101.87,
+              44.0
+            ],
+            [
+              -102.65,
+              44.0
+            ],
+            [
+              -102.65,
+              43.58
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Badlands National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "SD",
+        "region": "Great Plains",
+        "source": "MSFS_WU22",
+        "description": "Sharply eroded buttes, pinnacles, and spires of the South Dakota badlands."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -103.75,
+              28.95
+            ],
+            [
+              -102.85,
+              28.95
+            ],
+            [
+              -102.85,
+              29.65
+            ],
+            [
+              -103.75,
+              29.65
+            ],
+            [
+              -103.75,
+              28.95
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Big Bend National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "TX",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Remote Chihuahuan Desert park along a sweeping bend of the Rio Grande."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -107.8,
+              38.52
+            ],
+            [
+              -107.48,
+              38.52
+            ],
+            [
+              -107.48,
+              38.65
+            ],
+            [
+              -107.8,
+              38.65
+            ],
+            [
+              -107.8,
+              38.52
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Black Canyon of the Gunnison National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CO",
+        "region": "Rocky Mountain",
+        "source": "MSFS_WU22",
+        "description": "Dramatic narrow canyon with near-vertical walls carved by the Gunnison River."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -112.35,
+              37.43
+            ],
+            [
+              -111.95,
+              37.43
+            ],
+            [
+              -111.95,
+              37.73
+            ],
+            [
+              -112.35,
+              37.73
+            ],
+            [
+              -112.35,
+              37.43
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Bryce Canyon National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "UT",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Amphitheaters of red, orange, and white hoodoos eroded from the Claron Formation."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -110.3,
+              37.82
+            ],
+            [
+              -109.68,
+              37.82
+            ],
+            [
+              -109.68,
+              38.47
+            ],
+            [
+              -110.3,
+              38.47
+            ],
+            [
+              -110.3,
+              37.82
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Canyonlands National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "UT",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Vast wilderness of canyons, mesas, and buttes carved by the Colorado and Green Rivers."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -111.4,
+              37.65
+            ],
+            [
+              -110.78,
+              37.65
+            ],
+            [
+              -110.78,
+              38.37
+            ],
+            [
+              -111.4,
+              38.37
+            ],
+            [
+              -111.4,
+              37.65
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Capitol Reef National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "UT",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Hundred-mile Waterpocket Fold wrinkle in the Earth's crust, with colorful cliffs and canyons."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -104.62,
+              32.07
+            ],
+            [
+              -104.27,
+              32.07
+            ],
+            [
+              -104.27,
+              32.35
+            ],
+            [
+              -104.62,
+              32.35
+            ],
+            [
+              -104.62,
+              32.07
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Carlsbad Caverns National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "NM",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Massive limestone cave system with the Big Room \u2014 one of the world's largest underground chambers."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -122.28,
+              42.73
+            ],
+            [
+              -121.73,
+              42.73
+            ],
+            [
+              -121.73,
+              43.05
+            ],
+            [
+              -122.28,
+              43.05
+            ],
+            [
+              -122.28,
+              42.73
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Crater Lake National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "OR",
+        "region": "Pacific Northwest",
+        "source": "MSFS_WU22",
+        "description": "Deepest lake in the US, formed in the caldera of collapsed volcano Mount Mazama."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -117.48,
+              35.9
+            ],
+            [
+              -116.0,
+              35.9
+            ],
+            [
+              -116.0,
+              37.62
+            ],
+            [
+              -117.48,
+              37.62
+            ],
+            [
+              -117.48,
+              35.9
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Death Valley National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CA/NV",
+        "region": "Mojave Desert",
+        "source": "MSFS_WU22",
+        "description": "Lowest, hottest, driest point in North America \u2014 salt flats, sand dunes, and colorful badlands."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -82.97,
+              24.54
+            ],
+            [
+              -82.72,
+              24.54
+            ],
+            [
+              -82.72,
+              24.75
+            ],
+            [
+              -82.97,
+              24.75
+            ],
+            [
+              -82.97,
+              24.54
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Dry Tortugas National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "FL",
+        "region": "Southeast",
+        "source": "MSFS_WU22",
+        "description": "Remote island park 70 miles west of Key West \u2014 coral reefs, sea turtles, and Fort Jefferson."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -81.08,
+              25.1
+            ],
+            [
+              -80.28,
+              25.1
+            ],
+            [
+              -80.28,
+              25.98
+            ],
+            [
+              -81.08,
+              25.98
+            ],
+            [
+              -81.08,
+              25.1
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Everglades National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "FL",
+        "region": "Southeast",
+        "source": "MSFS_WU22",
+        "description": "The largest subtropical wilderness in the US \u2014 sawgrass prairies, mangroves, and abundant wildlife."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -114.5,
+              48.23
+            ],
+            [
+              -113.25,
+              48.23
+            ],
+            [
+              -113.25,
+              49.0
+            ],
+            [
+              -114.5,
+              49.0
+            ],
+            [
+              -114.5,
+              48.23
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Glacier National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "MT",
+        "region": "Northern Rockies",
+        "source": "MSFS_WU22",
+        "description": "Crown of the Continent ecosystem \u2014 glaciers, alpine meadows, and Going-to-the-Sun Road."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -112.53,
+              35.97
+            ],
+            [
+              -111.58,
+              35.97
+            ],
+            [
+              -111.58,
+              36.6
+            ],
+            [
+              -112.53,
+              36.6
+            ],
+            [
+              -112.53,
+              35.97
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Grand Canyon National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "AZ",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "277-mile gorge carved by the Colorado River \u2014 one of the world's great natural wonders."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -110.85,
+              43.49
+            ],
+            [
+              -110.4,
+              43.49
+            ],
+            [
+              -110.4,
+              44.15
+            ],
+            [
+              -110.85,
+              44.15
+            ],
+            [
+              -110.85,
+              43.49
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Grand Teton National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "WY",
+        "region": "Rocky Mountain",
+        "source": "MSFS_WU22",
+        "description": "Jagged Teton Range rising abruptly above Jackson Hole valley \u2014 iconic Western skyline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -105.65,
+              37.67
+            ],
+            [
+              -105.42,
+              37.67
+            ],
+            [
+              -105.42,
+              37.9
+            ],
+            [
+              -105.65,
+              37.9
+            ],
+            [
+              -105.65,
+              37.67
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Great Sand Dunes National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CO",
+        "region": "Rocky Mountain",
+        "source": "MSFS_WU22",
+        "description": "Tallest sand dunes in North America, set against the Sangre de Cristo Mountains."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -84.05,
+              35.43
+            ],
+            [
+              -83.11,
+              35.43
+            ],
+            [
+              -83.11,
+              35.8
+            ],
+            [
+              -84.05,
+              35.8
+            ],
+            [
+              -84.05,
+              35.43
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Great Smoky Mountains National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "TN/NC",
+        "region": "Appalachian",
+        "source": "MSFS_WU22",
+        "description": "Most visited US national park \u2014 ancient mountains blanketed in old-growth forest and famous smoky haze."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -105.0,
+              31.78
+            ],
+            [
+              -104.62,
+              31.78
+            ],
+            [
+              -104.62,
+              32.1
+            ],
+            [
+              -105.0,
+              32.1
+            ],
+            [
+              -105.0,
+              31.78
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Guadalupe Mountains National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "TX",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Ancient marine fossil reef \u2014 highest point in Texas, El Capitan limestone escarpment."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -116.52,
+              33.66
+            ],
+            [
+              -115.73,
+              33.66
+            ],
+            [
+              -115.73,
+              34.13
+            ],
+            [
+              -116.52,
+              34.13
+            ],
+            [
+              -116.52,
+              33.66
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Joshua Tree National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CA",
+        "region": "Mojave Desert",
+        "source": "MSFS_WU22",
+        "description": "Where the Mojave and Sonoran Deserts meet \u2014 twisted Joshua trees and massive boulder formations."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -119.03,
+              36.73
+            ],
+            [
+              -118.35,
+              36.73
+            ],
+            [
+              -118.35,
+              37.15
+            ],
+            [
+              -119.03,
+              37.15
+            ],
+            [
+              -119.03,
+              36.73
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Kings Canyon National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CA",
+        "region": "Sierra Nevada",
+        "source": "MSFS_WU22",
+        "description": "Adjacent to Sequoia NP \u2014 deep canyons and giant sequoia groves in the Sierra Nevada."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -121.9,
+              45.1
+            ],
+            [
+              -121.4,
+              45.1
+            ],
+            [
+              -121.4,
+              45.6
+            ],
+            [
+              -121.9,
+              45.6
+            ],
+            [
+              -121.9,
+              45.1
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Mount Hood National Forest",
+        "type": "NationalForest",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "OR",
+        "region": "Pacific Northwest",
+        "source": "MSFS_WU22",
+        "description": "Oregon's iconic volcanic peak \u2014 year-round skiing, hiking, and the Columbia River Gorge rim."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -122.0,
+              46.62
+            ],
+            [
+              -121.48,
+              46.62
+            ],
+            [
+              -121.48,
+              47.0
+            ],
+            [
+              -122.0,
+              47.0
+            ],
+            [
+              -122.0,
+              46.62
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Mount Rainier National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "WA",
+        "region": "Pacific Northwest",
+        "source": "MSFS_WU22",
+        "description": "An active stratovolcano at 14,411 ft \u2014 largest glacial system in the contiguous US."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -103.48,
+              43.85
+            ],
+            [
+              -103.42,
+              43.85
+            ],
+            [
+              -103.42,
+              43.9
+            ],
+            [
+              -103.48,
+              43.9
+            ],
+            [
+              -103.48,
+              43.85
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Mount Rushmore National Memorial",
+        "type": "NationalMonument",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "SD",
+        "region": "Great Plains",
+        "source": "MSFS_WU22",
+        "description": "60-foot granite sculptures of Washington, Jefferson, Roosevelt, and Lincoln in the Black Hills."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -121.56,
+              48.16
+            ],
+            [
+              -120.6,
+              48.16
+            ],
+            [
+              -120.6,
+              48.83
+            ],
+            [
+              -121.56,
+              48.83
+            ],
+            [
+              -121.56,
+              48.16
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "North Cascades National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "WA",
+        "region": "Pacific Northwest",
+        "source": "MSFS_WU22",
+        "description": "The 'American Alps' \u2014 jagged peaks, more than 300 glaciers, and dramatic alpine scenery."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -124.73,
+              47.5
+            ],
+            [
+              -123.33,
+              47.5
+            ],
+            [
+              -123.33,
+              48.17
+            ],
+            [
+              -124.73,
+              48.17
+            ],
+            [
+              -124.73,
+              47.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Olympic National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "WA",
+        "region": "Pacific Northwest",
+        "source": "MSFS_WU22",
+        "description": "Three distinct ecosystems: glacier-capped peaks, temperate rainforest, and wild Pacific coastline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -124.2,
+              41.17
+            ],
+            [
+              -123.8,
+              41.17
+            ],
+            [
+              -123.8,
+              41.8
+            ],
+            [
+              -124.2,
+              41.8
+            ],
+            [
+              -124.2,
+              41.17
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Redwood National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CA",
+        "region": "Pacific Northwest",
+        "source": "MSFS_WU22",
+        "description": "Tallest trees on Earth \u2014 old-growth coastal redwoods along the Northern California coast."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -105.92,
+              40.13
+            ],
+            [
+              -105.47,
+              40.13
+            ],
+            [
+              -105.47,
+              40.6
+            ],
+            [
+              -105.92,
+              40.6
+            ],
+            [
+              -105.92,
+              40.13
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Rocky Mountain National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CO",
+        "region": "Rocky Mountain",
+        "source": "MSFS_WU22",
+        "description": "Continental Divide along Trail Ridge Road \u2014 60+ peaks above 12,000 ft, alpine tundra."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -111.15,
+              44.13
+            ],
+            [
+              -109.83,
+              44.13
+            ],
+            [
+              -109.83,
+              45.1
+            ],
+            [
+              -111.15,
+              45.1
+            ],
+            [
+              -111.15,
+              44.13
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Yellowstone National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "WY/MT/ID",
+        "region": "Rocky Mountain",
+        "source": "MSFS_WU22",
+        "description": "World's first national park \u2014 geothermal geysers including Old Faithful, hot springs, and vast wildlife."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -119.88,
+              37.5
+            ],
+            [
+              -119.19,
+              37.5
+            ],
+            [
+              -119.19,
+              38.18
+            ],
+            [
+              -119.88,
+              38.18
+            ],
+            [
+              -119.88,
+              37.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Yosemite National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "CA",
+        "region": "Sierra Nevada",
+        "source": "MSFS_WU22",
+        "description": "Glacier-carved valley with El Capitan, Half Dome, and Yosemite Falls in the Sierra Nevada."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -113.28,
+              37.13
+            ],
+            [
+              -112.85,
+              37.13
+            ],
+            [
+              -112.85,
+              37.53
+            ],
+            [
+              -113.28,
+              37.53
+            ],
+            [
+              -113.28,
+              37.13
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Zion National Park",
+        "type": "NationalPark",
+        "airspaceClass": "n/a",
+        "worldUpdate": "WU22",
+        "state": "UT",
+        "region": "Southwest",
+        "source": "MSFS_WU22",
+        "description": "Massive sandstone cliffs of cream, pink, and red \u2014 Angels Landing and the Narrows slot canyon."
+      }
+    }
+  ]
+}

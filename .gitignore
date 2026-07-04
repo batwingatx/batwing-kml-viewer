@@ -1,0 +1,5 @@
+node_modules/
+presets.json
+*.log
+.DS_Store
+.env

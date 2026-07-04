@@ -1,0 +1,122 @@
+name: Validate → Build → Deploy Pages
+
+# ── Triggers ──────────────────────────────────────────────────────────────────
+# Runs on every push to main that touches a geo file OR the viewer app itself.
+# Also available as a manual dispatch from the Actions tab.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/**'
+      - 'scripts/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+# Grant Pages write permission
+permissions:
+  contents: write   # needed to push to gh-pages branch
+  pages: write
+  id-token: write
+
+jobs:
+  # ── Job 1: Geometry validation (quality gate) ──────────────────────────────
+  validate:
+    name: Validate Geometry
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.gate.outputs.passed }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run geometry validation
+        id: gate
+        run: |
+          node scripts/validate-geo.js
+          echo "passed=true" >> $GITHUB_OUTPUT
+
+      - name: Save validation report
+        if: always()
+        run: |
+          mkdir -p ci-artifacts
+          node scripts/validate-geo.js > ci-artifacts/validation-report.txt 2>&1 || true
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: ci-artifacts/validation-report.txt
+          retention-days: 30
+
+  # ── Job 2: Build static index + deploy to gh-pages ───────────────────────
+  deploy:
+    name: Build Index & Deploy Pages
+    needs: validate        # only runs if validate job succeeded
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Build the static site into ./dist
+      - name: Build dataset index
+        env:
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          OUTPUT_DIR: ./dist
+        run: node scripts/build-index.js
+
+      # List what's going up for audit trail
+      - name: List dist contents
+        run: find dist -type f | sort
+
+      # Deploy dist/ to gh-pages branch using the official Pages action.
+      # On first run this creates the branch; subsequent runs update it.
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          commit_message: "deploy: ${{ github.sha }} — ${{ github.event.head_commit.message || 'manual dispatch' }}"
+          # Keep the CNAME file if one is ever added
+          keep_files: false
+          # Suppress Jekyll processing (our HTML is already built)
+          enable_jekyll: false
+
+      # Print the Pages URL so it appears in the Actions log
+      - name: Print Pages URL
+        run: |
+          REPO="${{ github.repository }}"
+          OWNER=$(echo "$REPO" | cut -d/ -f1 | tr '[:upper:]' '[:lower:]')
+          NAME=$(echo "$REPO" | cut -d/ -f2)
+          echo "✅ Deployed to: https://${OWNER}.github.io/${NAME}/"
+          echo "PAGES_URL=https://${OWNER}.github.io/${NAME}/" >> $GITHUB_ENV
+
+      - name: Summary
+        run: |
+          echo "### 🚀 Batwing Pages deployed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** $PAGES_URL" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** \`${{ github.actor }}\` on \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

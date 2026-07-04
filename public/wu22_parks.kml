@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>MSFS WU22 — US National Parks</name>
+    <description>31 Areas of Interest from Microsoft Flight Simulator World Update 22: US National Parks (July 4, 2026). Bounding-box polygon approximations.</description>
+    <Style id="nationalPark">
+      <LineStyle>
+        <color>ff1c4f7a</color>
+        <width>2.0</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4c2ea1d9</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="nationalMonument">
+      <LineStyle>
+        <color>ff10355a</color>
+        <width>2.0</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4c2078c0</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="nationalForest">
+      <LineStyle>
+        <color>ff105a2a</color>
+        <width>2.0</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>3f309a5a</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Folder>
+      <name>WU22 Areas of Interest</name>
+      <open>1</open>
+      <Placemark>
+        <name>Acadia National Park</name>
+        <description><![CDATA[&lt;b&gt;Acadia National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: ME&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Rugged Atlantic coastline, granite peaks, and carriage roads on Mount Desert Island.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">ME</SimpleData>
+            <SimpleData name="region">Northeast</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-68.42,44.01,0
+-68.1,44.01,0
+-68.1,44.45,0
+-68.42,44.45,0
+-68.42,44.01,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Arches National Park</name>
+        <description><![CDATA[&lt;b&gt;Arches National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: UT&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Over 2,000 natural sandstone arches including Delicate Arch, near Moab.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">UT</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-109.8,38.58,0
+-109.51,38.58,0
+-109.51,38.83,0
+-109.8,38.83,0
+-109.8,38.58,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Badlands National Park</name>
+        <description><![CDATA[&lt;b&gt;Badlands National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: SD&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Sharply eroded buttes, pinnacles, and spires of the South Dakota badlands.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">SD</SimpleData>
+            <SimpleData name="region">Great Plains</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-102.65,43.58,0
+-101.87,43.58,0
+-101.87,44.0,0
+-102.65,44.0,0
+-102.65,43.58,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Big Bend National Park</name>
+        <description><![CDATA[&lt;b&gt;Big Bend National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: TX&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Remote Chihuahuan Desert park along a sweeping bend of the Rio Grande.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">TX</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-103.75,28.95,0
+-102.85,28.95,0
+-102.85,29.65,0
+-103.75,29.65,0
+-103.75,28.95,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Black Canyon of the Gunnison National Park</name>
+        <description><![CDATA[&lt;b&gt;Black Canyon of the Gunnison National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CO&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Dramatic narrow canyon with near-vertical walls carved by the Gunnison River.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CO</SimpleData>
+            <SimpleData name="region">Rocky Mountain</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-107.8,38.52,0
+-107.48,38.52,0
+-107.48,38.65,0
+-107.8,38.65,0
+-107.8,38.52,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Bryce Canyon National Park</name>
+        <description><![CDATA[&lt;b&gt;Bryce Canyon National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: UT&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Amphitheaters of red, orange, and white hoodoos eroded from the Claron Formation.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">UT</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-112.35,37.43,0
+-111.95,37.43,0
+-111.95,37.73,0
+-112.35,37.73,0
+-112.35,37.43,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Canyonlands National Park</name>
+        <description><![CDATA[&lt;b&gt;Canyonlands National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: UT&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Vast wilderness of canyons, mesas, and buttes carved by the Colorado and Green Rivers.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">UT</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-110.3,37.82,0
+-109.68,37.82,0
+-109.68,38.47,0
+-110.3,38.47,0
+-110.3,37.82,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Capitol Reef National Park</name>
+        <description><![CDATA[&lt;b&gt;Capitol Reef National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: UT&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Hundred-mile Waterpocket Fold wrinkle in the Earth's crust, with colorful cliffs and canyons.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">UT</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-111.4,37.65,0
+-110.78,37.65,0
+-110.78,38.37,0
+-111.4,38.37,0
+-111.4,37.65,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Carlsbad Caverns National Park</name>
+        <description><![CDATA[&lt;b&gt;Carlsbad Caverns National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: NM&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Massive limestone cave system with the Big Room — one of the world's largest underground chambers.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">NM</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-104.62,32.07,0
+-104.27,32.07,0
+-104.27,32.35,0
+-104.62,32.35,0
+-104.62,32.07,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Crater Lake National Park</name>
+        <description><![CDATA[&lt;b&gt;Crater Lake National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: OR&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Deepest lake in the US, formed in the caldera of collapsed volcano Mount Mazama.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">OR</SimpleData>
+            <SimpleData name="region">Pacific Northwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-122.28,42.73,0
+-121.73,42.73,0
+-121.73,43.05,0
+-122.28,43.05,0
+-122.28,42.73,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Death Valley National Park</name>
+        <description><![CDATA[&lt;b&gt;Death Valley National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CA/NV&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Lowest, hottest, driest point in North America — salt flats, sand dunes, and colorful badlands.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CA/NV</SimpleData>
+            <SimpleData name="region">Mojave Desert</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-117.48,35.9,0
+-116.0,35.9,0
+-116.0,37.62,0
+-117.48,37.62,0
+-117.48,35.9,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Dry Tortugas National Park</name>
+        <description><![CDATA[&lt;b&gt;Dry Tortugas National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: FL&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Remote island park 70 miles west of Key West — coral reefs, sea turtles, and Fort Jefferson.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">FL</SimpleData>
+            <SimpleData name="region">Southeast</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-82.97,24.54,0
+-82.72,24.54,0
+-82.72,24.75,0
+-82.97,24.75,0
+-82.97,24.54,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Everglades National Park</name>
+        <description><![CDATA[&lt;b&gt;Everglades National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: FL&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;The largest subtropical wilderness in the US — sawgrass prairies, mangroves, and abundant wildlife.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">FL</SimpleData>
+            <SimpleData name="region">Southeast</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-81.08,25.1,0
+-80.28,25.1,0
+-80.28,25.98,0
+-81.08,25.98,0
+-81.08,25.1,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Glacier National Park</name>
+        <description><![CDATA[&lt;b&gt;Glacier National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: MT&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Crown of the Continent ecosystem — glaciers, alpine meadows, and Going-to-the-Sun Road.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">MT</SimpleData>
+            <SimpleData name="region">Northern Rockies</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-114.5,48.23,0
+-113.25,48.23,0
+-113.25,49.0,0
+-114.5,49.0,0
+-114.5,48.23,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Grand Canyon National Park</name>
+        <description><![CDATA[&lt;b&gt;Grand Canyon National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: AZ&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;277-mile gorge carved by the Colorado River — one of the world's great natural wonders.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">AZ</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-112.53,35.97,0
+-111.58,35.97,0
+-111.58,36.6,0
+-112.53,36.6,0
+-112.53,35.97,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Grand Teton National Park</name>
+        <description><![CDATA[&lt;b&gt;Grand Teton National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: WY&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Jagged Teton Range rising abruptly above Jackson Hole valley — iconic Western skyline.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">WY</SimpleData>
+            <SimpleData name="region">Rocky Mountain</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-110.85,43.49,0
+-110.4,43.49,0
+-110.4,44.15,0
+-110.85,44.15,0
+-110.85,43.49,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Great Sand Dunes National Park</name>
+        <description><![CDATA[&lt;b&gt;Great Sand Dunes National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CO&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Tallest sand dunes in North America, set against the Sangre de Cristo Mountains.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CO</SimpleData>
+            <SimpleData name="region">Rocky Mountain</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-105.65,37.67,0
+-105.42,37.67,0
+-105.42,37.9,0
+-105.65,37.9,0
+-105.65,37.67,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Great Smoky Mountains National Park</name>
+        <description><![CDATA[&lt;b&gt;Great Smoky Mountains National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: TN/NC&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Most visited US national park — ancient mountains blanketed in old-growth forest and famous smoky haze.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">TN/NC</SimpleData>
+            <SimpleData name="region">Appalachian</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-84.05,35.43,0
+-83.11,35.43,0
+-83.11,35.8,0
+-84.05,35.8,0
+-84.05,35.43,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Guadalupe Mountains National Park</name>
+        <description><![CDATA[&lt;b&gt;Guadalupe Mountains National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: TX&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Ancient marine fossil reef — highest point in Texas, El Capitan limestone escarpment.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">TX</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-105.0,31.78,0
+-104.62,31.78,0
+-104.62,32.1,0
+-105.0,32.1,0
+-105.0,31.78,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Joshua Tree National Park</name>
+        <description><![CDATA[&lt;b&gt;Joshua Tree National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CA&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Where the Mojave and Sonoran Deserts meet — twisted Joshua trees and massive boulder formations.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CA</SimpleData>
+            <SimpleData name="region">Mojave Desert</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-116.52,33.66,0
+-115.73,33.66,0
+-115.73,34.13,0
+-116.52,34.13,0
+-116.52,33.66,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Kings Canyon National Park</name>
+        <description><![CDATA[&lt;b&gt;Kings Canyon National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CA&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Adjacent to Sequoia NP — deep canyons and giant sequoia groves in the Sierra Nevada.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CA</SimpleData>
+            <SimpleData name="region">Sierra Nevada</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-119.03,36.73,0
+-118.35,36.73,0
+-118.35,37.15,0
+-119.03,37.15,0
+-119.03,36.73,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Mount Hood National Forest</name>
+        <description><![CDATA[&lt;b&gt;Mount Hood National Forest&lt;/b&gt;&lt;br/&gt;Type: NationalForest&lt;br/&gt;State: OR&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Oregon's iconic volcanic peak — year-round skiing, hiking, and the Columbia River Gorge rim.]]></description>
+        <styleUrl>#nationalForest</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalForest</SimpleData>
+            <SimpleData name="state">OR</SimpleData>
+            <SimpleData name="region">Pacific Northwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-121.9,45.1,0
+-121.4,45.1,0
+-121.4,45.6,0
+-121.9,45.6,0
+-121.9,45.1,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Mount Rainier National Park</name>
+        <description><![CDATA[&lt;b&gt;Mount Rainier National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: WA&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;An active stratovolcano at 14,411 ft — largest glacial system in the contiguous US.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">WA</SimpleData>
+            <SimpleData name="region">Pacific Northwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-122.0,46.62,0
+-121.48,46.62,0
+-121.48,47.0,0
+-122.0,47.0,0
+-122.0,46.62,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Mount Rushmore National Memorial</name>
+        <description><![CDATA[&lt;b&gt;Mount Rushmore National Memorial&lt;/b&gt;&lt;br/&gt;Type: NationalMonument&lt;br/&gt;State: SD&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;60-foot granite sculptures of Washington, Jefferson, Roosevelt, and Lincoln in the Black Hills.]]></description>
+        <styleUrl>#nationalMonument</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalMonument</SimpleData>
+            <SimpleData name="state">SD</SimpleData>
+            <SimpleData name="region">Great Plains</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-103.48,43.85,0
+-103.42,43.85,0
+-103.42,43.9,0
+-103.48,43.9,0
+-103.48,43.85,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>North Cascades National Park</name>
+        <description><![CDATA[&lt;b&gt;North Cascades National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: WA&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;The 'American Alps' — jagged peaks, more than 300 glaciers, and dramatic alpine scenery.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">WA</SimpleData>
+            <SimpleData name="region">Pacific Northwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-121.56,48.16,0
+-120.6,48.16,0
+-120.6,48.83,0
+-121.56,48.83,0
+-121.56,48.16,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Olympic National Park</name>
+        <description><![CDATA[&lt;b&gt;Olympic National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: WA&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Three distinct ecosystems: glacier-capped peaks, temperate rainforest, and wild Pacific coastline.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">WA</SimpleData>
+            <SimpleData name="region">Pacific Northwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-124.73,47.5,0
+-123.33,47.5,0
+-123.33,48.17,0
+-124.73,48.17,0
+-124.73,47.5,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Redwood National Park</name>
+        <description><![CDATA[&lt;b&gt;Redwood National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CA&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Tallest trees on Earth — old-growth coastal redwoods along the Northern California coast.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CA</SimpleData>
+            <SimpleData name="region">Pacific Northwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-124.2,41.17,0
+-123.8,41.17,0
+-123.8,41.8,0
+-124.2,41.8,0
+-124.2,41.17,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Rocky Mountain National Park</name>
+        <description><![CDATA[&lt;b&gt;Rocky Mountain National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CO&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Continental Divide along Trail Ridge Road — 60+ peaks above 12,000 ft, alpine tundra.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CO</SimpleData>
+            <SimpleData name="region">Rocky Mountain</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-105.92,40.13,0
+-105.47,40.13,0
+-105.47,40.6,0
+-105.92,40.6,0
+-105.92,40.13,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Yellowstone National Park</name>
+        <description><![CDATA[&lt;b&gt;Yellowstone National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: WY/MT/ID&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;World's first national park — geothermal geysers including Old Faithful, hot springs, and vast wildlife.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">WY/MT/ID</SimpleData>
+            <SimpleData name="region">Rocky Mountain</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-111.15,44.13,0
+-109.83,44.13,0
+-109.83,45.1,0
+-111.15,45.1,0
+-111.15,44.13,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Yosemite National Park</name>
+        <description><![CDATA[&lt;b&gt;Yosemite National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: CA&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Glacier-carved valley with El Capitan, Half Dome, and Yosemite Falls in the Sierra Nevada.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">CA</SimpleData>
+            <SimpleData name="region">Sierra Nevada</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-119.88,37.5,0
+-119.19,37.5,0
+-119.19,38.18,0
+-119.88,38.18,0
+-119.88,37.5,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Zion National Park</name>
+        <description><![CDATA[&lt;b&gt;Zion National Park&lt;/b&gt;&lt;br/&gt;Type: NationalPark&lt;br/&gt;State: UT&lt;br/&gt;World Update: WU22&lt;br/&gt;Source: MSFS_WU22&lt;br/&gt;&lt;br/&gt;Massive sandstone cliffs of cream, pink, and red — Angels Landing and the Narrows slot canyon.]]></description>
+        <styleUrl>#nationalPark</styleUrl>
+        <ExtendedData>
+          <SchemaData schemaUrl="#BatwingLayer">
+            <SimpleData name="worldUpdate">WU22</SimpleData>
+            <SimpleData name="type">NationalPark</SimpleData>
+            <SimpleData name="state">UT</SimpleData>
+            <SimpleData name="region">Southwest</SimpleData>
+            <SimpleData name="source">MSFS_WU22</SimpleData>
+            <SimpleData name="fillColor">#d9a12e</SimpleData>
+            <SimpleData name="strokeColor">#7a4f1c</SimpleData>
+            <SimpleData name="fillOpacity">0.30</SimpleData>
+            <SimpleData name="strokeWidth">2</SimpleData>
+          </SchemaData>
+        </ExtendedData>
+        <Polygon>
+          <extrude>0</extrude>
+          <altitudeMode>clampToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+-113.28,37.13,0
+-112.85,37.13,0
+-112.85,37.53,0
+-113.28,37.53,0
+-113.28,37.13,0
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

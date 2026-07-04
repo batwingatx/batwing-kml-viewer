@@ -1,0 +1,22 @@
+{
+  "name": "kml-viewer-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "node scripts/validate-geo.js",
+    "validate": "node scripts/validate-geo.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@tmcw/togeojson": "^5.8.1",
+    "@turf/turf": "^7.3.5",
+    "@xmldom/xmldom": "^0.9.10"
+  }
+}

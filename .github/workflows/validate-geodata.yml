@@ -1,0 +1,96 @@
+name: Validate GeoData
+
+# ── Triggers ──────────────────────────────────────────────────────────────────
+# Runs on every push that touches a .geojson or .kml file anywhere in the repo,
+# and on every pull request that does the same — giving you a quality gate
+# before any dataset merge.
+on:
+  push:
+    paths:
+      - '**/*.geojson'
+      - '**/*.kml'
+  pull_request:
+    paths:
+      - '**/*.geojson'
+      - '**/*.kml'
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Batwing Geometry Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the full repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Set up Node 20 (LTS) with npm cache
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. Install all dependencies (including devDependencies)
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Detect which geo files changed in this push/PR.
+      #    On workflow_dispatch (manual run) we validate ALL files instead.
+      - name: Detect changed geo files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "files=" >> $GITHUB_OUTPUT
+            echo "all=true" >> $GITHUB_OUTPUT
+          else
+            # Get list of added/modified .geojson and .kml files
+            CHANGED=$(git diff --name-only --diff-filter=AM \
+              ${{ github.event.before }} ${{ github.sha }} 2>/dev/null \
+              | grep -E '\.(geojson|kml)$' \
+              | tr '\n' ' ' || true)
+            # Fallback: compare against merge base for PRs
+            if [ -z "$CHANGED" ] && [ "${{ github.event_name }}" = "pull_request" ]; then
+              CHANGED=$(git diff --name-only --diff-filter=AM \
+                origin/${{ github.base_ref }}...HEAD \
+                | grep -E '\.(geojson|kml)$' \
+                | tr '\n' ' ' || true)
+            fi
+            echo "files=$CHANGED" >> $GITHUB_OUTPUT
+            echo "all=false" >> $GITHUB_OUTPUT
+          fi
+
+      # 5. Run the Batwing validator
+      #    • If specific files were detected, pass them explicitly so only the
+      #      changed dataset is checked (faster CI, cleaner output).
+      #    • If no changed files were identified (edge case) or this is a
+      #      manual dispatch, validate everything under public/.
+      - name: Run geometry validation
+        run: |
+          if [ "${{ steps.changed.outputs.all }}" = "true" ] || \
+             [ -z "${{ steps.changed.outputs.files }}" ]; then
+            echo "Validating all geo files under public/"
+            node scripts/validate-geo.js
+          else
+            echo "Validating changed files: ${{ steps.changed.outputs.files }}"
+            node scripts/validate-geo.js ${{ steps.changed.outputs.files }}
+          fi
+
+      # 6. Upload the validation log as a downloadable artifact
+      #    (always runs so you can inspect failures even when the step above fails)
+      - name: Save validation log
+        if: always()
+        run: |
+          mkdir -p ci-artifacts
+          node scripts/validate-geo.js > ci-artifacts/validation-report.txt 2>&1 || true
+          echo "Exit code: $?" >> ci-artifacts/validation-report.txt
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: ci-artifacts/validation-report.txt
+          retention-days: 30
