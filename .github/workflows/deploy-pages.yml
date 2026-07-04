@@ -5,7 +5,7 @@ name: Validate → Build → Deploy Pages
 # Also available as a manual dispatch from the Actions tab.
 on:
   push:
-    branches: [main]
+    branches: [clean-start]
     paths:
       - 'public/**'
       - 'scripts/**'

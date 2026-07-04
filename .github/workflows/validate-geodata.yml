@@ -6,6 +6,7 @@ name: Validate GeoData
 # before any dataset merge.
 on:
   push:
+    branches: [clean-start]
     paths:
       - '**/*.geojson'
       - '**/*.kml'
