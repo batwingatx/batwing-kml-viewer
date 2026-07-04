@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batwing Airspace &amp; Parks Datasets</title>
+  <meta name="description" content="Curated GeoJSON and KML datasets for MSFS airspace boundaries, national parks, and custom flight simulation polygons — validated and maintained by Batwing.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d1117;
+      --surface:    #161b22;
+      --surface2:   #1c2230;
+      --border:     rgba(255,255,255,0.08);
+      --accent:     #58a6ff;
+      --accent2:    #1f6feb;
+      --text:       #e6edf3;
+      --muted:      #8b949e;
+      --geojson:    #2da44e;
+      --geojson-bg: rgba(45,164,78,0.12);
+      --kml:        #d29922;
+      --kml-bg:     rgba(210,153,34,0.12);
+      --radius:     8px;
+      --radius-lg:  14px;
+      font-size: 15px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px 24px;
+      text-align: center;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .logo svg { width: 36px; height: 36px; }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 16px 24px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+    .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+    .stat-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ── Main grid ── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .card:hover {
+      border-color: rgba(88,166,255,.3);
+      box-shadow: 0 4px 24px rgba(88,166,255,.07);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .badge.geojson { background: var(--geojson-bg); color: var(--geojson); border: 1px solid rgba(45,164,78,.25); }
+    .badge.kml     { background: var(--kml-bg);     color: var(--kml);     border: 1px solid rgba(210,153,34,.25); }
+
+    .card-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .card-bbox {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: rgba(255,255,255,0.04);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--muted);
+    }
+
+    .chip em {
+      font-style: normal;
+      color: var(--accent);
+      font-weight: 600;
+      margin-left: 3px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 4px;
+      padding: 8px 14px;
+      background: rgba(31,111,235,.15);
+      border: 1px solid rgba(31,111,235,.35);
+      color: var(--accent);
+      border-radius: var(--radius);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s, border-color .15s;
+    }
+
+    .download-btn:hover {
+      background: rgba(31,111,235,.28);
+      border-color: var(--accent2);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 520px) {
+      .stats { gap: 20px; }
+      .grid  { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <!-- Batwing bat-wing chevron logo -->
+    <svg viewBox="0 0 36 36" fill="none" aria-label="Batwing">
+      <path d="M18 28 L2 10 L10 14 L18 8 L26 14 L34 10 Z" fill="#58a6ff" opacity=".9"/>
+      <path d="M18 28 L10 14 L18 20 L26 14 Z" fill="#1f6feb"/>
+    </svg>
+    <h1>Batwing Datasets</h1>
+  </div>
+  <p class="tagline">Validated GeoJSON &amp; KML for MSFS airspace, national parks, and custom flight boundaries</p>
+</header>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-val">2</div>
+    <div class="stat-lbl">Datasets</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">62</div>
+    <div class="stat-lbl">Total Features</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">1</div>
+    <div class="stat-lbl">GeoJSON Files</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">1</div>
+    <div class="stat-lbl">KML Files</div>
+  </div>
+</div>
+
+<main>
+  <div class="section-title">Available datasets</div>
+  <div class="grid">
+    
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">WUWU22 Dataset</div>
+        <span class="badge geojson">GeoJSON</span>
+      </div>
+      <div class="card-meta">
+        <span title="File name">📄 wu22_parks.geojson</span>
+        <span title="Features">🗺 31 features</span>
+        <span title="File size">💾 27.4 KB</span>
+      </div>
+      <div class="card-bbox" title="Bounding box">📐 24.5400°N -124.7300°E → 49.0000°N -68.1000°E</div>
+      <div class="chips"><span class="chip">NationalPark <em>29</em></span><span class="chip">NationalForest <em>1</em></span><span class="chip">NationalMonument <em>1</em></span></div>
+      <a class="download-btn" href="https://github.com/nickarthur/batwing-kml-viewer/raw/main/public/wu22_parks.geojson" download="wu22_parks.geojson">
+        ⬇ Download GeoJSON
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MSFS WU22 — US National Parks</div>
+        <span class="badge kml">KML</span>
+      </div>
+      <div class="card-meta">
+        <span title="File name">📄 wu22_parks.kml</span>
+        <span title="Features">🗺 31 features</span>
+        <span title="File size">💾 45.2 KB</span>
+      </div>
+      
+      
+      <a class="download-btn" href="https://github.com/nickarthur/batwing-kml-viewer/raw/main/public/wu22_parks.kml" download="wu22_parks.kml">
+        ⬇ Download KML
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Built by <a href="https://github.com/nickarthur" target="_blank">NickArthur Night</a> · Batwing Flight Simulation Suite ·
+  Auto-published by GitHub Actions · Last built: Sat, 04 Jul 2026 06:27:55 GMT
+  · <a href="https://github.com/nickarthur/batwing-kml-viewer" target="_blank">View source</a>
+</footer>
+
+</body>
+</html>
