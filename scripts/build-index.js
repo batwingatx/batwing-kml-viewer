@@ -452,7 +452,7 @@ function buildHTML(datasets, repoUrl, builtAt) {
 </main>
 
 <footer>
-  Built by <a href="https://github.com/nickarthur" target="_blank">NickArthur Night</a> · Batwing Flight Simulation Suite ·
+  Built by <a href="https://github.com/batwing-studios" target="_blank">NickArthur Night</a> · Batwing Flight Simulation Suite ·
   Auto-published by GitHub Actions · Last built: ${builtAt}
   ${repoUrl ? `· <a href="${repoUrl}" target="_blank">View source</a>` : ''}
 </footer>
